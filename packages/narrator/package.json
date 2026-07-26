@@ -1,0 +1,25 @@
+{
+  "name": "@ifai/narrator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@ai-sdk/groq": "^3.0.53",
+    "@ifai/engine": "*",
+    "@openrouter/ai-sdk-provider": "^2.9.0",
+    "ai": "^6.0.175",
+    "ollama-ai-provider-v2": "^3.5.0",
+    "zod": "^4.4.3"
+  }
+}

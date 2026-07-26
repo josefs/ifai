@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/engine" },
+    { "path": "./packages/narrator" },
+    { "path": "./packages/agents" },
+    { "path": "./packages/content" },
+    { "path": "./apps/cli" }
+  ]
+}

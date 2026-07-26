@@ -1,0 +1,16 @@
+{
+  "name": "@ifai/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --experimental-strip-types src/main.ts"
+  },
+  "dependencies": {
+    "@ifai/engine": "*",
+    "@ifai/narrator": "*",
+    "@ifai/agents": "*",
+    "@ifai/content": "*"
+  }
+}

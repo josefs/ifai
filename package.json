@@ -1,0 +1,25 @@
+{
+  "name": "ifai",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LLM-driven interactive fiction set on Waystation Threnody.",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cli": "npm run build --silent && node --experimental-strip-types apps/cli/src/main.ts",
+    "cli:nobuild": "node --experimental-strip-types apps/cli/src/main.ts",
+    "typecheck": "tsc -b --pretty"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

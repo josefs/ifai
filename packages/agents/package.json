@@ -1,0 +1,23 @@
+{
+  "name": "@ifai/agents",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@ifai/engine": "*",
+    "@ifai/narrator": "*",
+    "ai": "^6.0.175",
+    "zod": "^4.4.3"
+  }
+}

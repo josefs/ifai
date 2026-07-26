@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    // The CLI is run directly from source via `node --experimental-strip-types`.
+    // We only emit declarations so that `.ts`-extension imports (which Node
+    // requires when stripping types) are valid for tsc as well.
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/engine" },
+    { "path": "../../packages/narrator" },
+    { "path": "../../packages/agents" },
+    { "path": "../../packages/content" }
+  ]
+}
