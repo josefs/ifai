@@ -15,6 +15,12 @@ export {
   logResponse,
   isPromptsDebug,
   promptsDebugLevel,
+  recordUsage,
+  resetUsage,
+  usageSummary,
+  usageLevel,
+  isUsageEnabled,
+  getUsageRecords,
 } from './llm/index.js';
-export type { ParsedAction, Role, ProviderResolution } from './llm/index.js';
+export type { ParsedAction, Role, ProviderResolution, UsageRecord } from './llm/index.js';
 

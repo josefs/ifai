@@ -71,6 +71,20 @@ the model's response payload. Redirect stderr to capture:
 IFAI_LLM=1 IFAI_DEBUG_PROMPTS=1 npm run cli 2>prompts.log
 ```
 
+To see how many tokens a session has used, set `IFAI_USAGE=1`. On exit
+the CLI prints a per-role summary table to stderr with call counts,
+input/output token counts, and wall time. `IFAI_USAGE=2` additionally
+prints a one-line stderr note after every LLM call. Regardless of
+`IFAI_USAGE`, you can type `usage` (or `tokens`) at any prompt to
+print the running total without spending a turn. Cost is not shown —
+the AI SDK doesn't expose per-call pricing, and hardcoding a rate
+table would rot the moment a provider retunes; multiply the token
+counts by whatever your provider currently charges.
+
+```bash
+IFAI_LLM=1 IFAI_PROVIDER=groq IFAI_USAGE=1 npm run cli
+```
+
 ## Layout
 
 - `packages/engine`   — deterministic ECS world model (no LLM dependency)

@@ -8,6 +8,7 @@ import {
   FallbackParser, FallbackNarrator,
   LLMParser, LLMNarrator,
   parserModel, narratorModel, npcModel, describeModel,
+  usageSummary, isUsageEnabled,
   type Parser, type Narrator,
 } from '@ifai/narrator';
 import {
@@ -82,6 +83,14 @@ async function main() {
       rl.prompt();
       continue;
     }
+    // `usage` / `tokens` — meta command. Prints the cumulative LLM
+    // usage table and does not spend a turn. Available regardless of
+    // whether LLM mode is enabled (harmlessly reports "no calls").
+    if (trimmed === 'usage' || trimmed === 'tokens') {
+      say(usageSummary() + '\n');
+      rl.prompt();
+      continue;
+    }
     await renderTurn(world, parser, narrator, agent, llmEnabled, { kind: 'input', input: trimmed }, say);
     if (isGameOver(world)) break;
     rl.prompt();
@@ -90,6 +99,11 @@ async function main() {
   wrap.flush();
   rl.close();
   if (isTTY) await saveHistory((rl as unknown as { history: string[] }).history);
+  // Final report — only when the user asked for it via IFAI_USAGE.
+  // Routed to stderr so it never gets mixed into piped game output.
+  if (isUsageEnabled()) {
+    process.stderr.write('\n' + usageSummary() + '\n');
+  }
 }
 
 /**

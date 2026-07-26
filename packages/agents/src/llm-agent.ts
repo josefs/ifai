@@ -1,5 +1,5 @@
 import { generateObject } from 'ai';
-import { npcModel, logPrompt, logResponse } from '@ifai/narrator';
+import { npcModel, logPrompt, logResponse, recordUsage } from '@ifai/narrator';
 import type { World } from '@ifai/engine';
 import { DialogueResponseSchema, type DialogueResponse } from './schema.js';
 import { DIALOGUE_SYSTEM } from './prompts.js';
@@ -22,14 +22,23 @@ export class LLMDialogueAgent implements DialogueAgent {
 
   async respond(w: World, npc: NpcContext, ex: Exchange): Promise<DialogueResponseLike> {
     try {
-      const { handle } = npcModel();
+      const { handle, provider, model } = npcModel();
       const userPrompt = buildUserPrompt(npc, ex);
       logPrompt({ role: `dialogue:${npc.name}`, system: DIALOGUE_SYSTEM, prompt: userPrompt });
-      const { object } = await generateObject({
+      const t0 = Date.now();
+      const { object, usage } = await generateObject({
         model:  handle,
         schema: DialogueResponseSchema,
         system: DIALOGUE_SYSTEM,
         prompt: userPrompt,
+      });
+      recordUsage({
+        role:         `dialogue:${npc.name}`,
+        provider,
+        model,
+        inputTokens:  usage.inputTokens  ?? 0,
+        outputTokens: usage.outputTokens ?? 0,
+        durationMs:   Date.now() - t0,
       });
       logResponse({ role: `dialogue:${npc.name}`, payload: object });
       // Defence-in-depth: the schema already rejects punctuation-only

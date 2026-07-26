@@ -5,6 +5,7 @@ import { narratorModel } from './models.js';
 import { buildNarratorSystem } from './prompts.js';
 import { FallbackNarrator } from '../narrator-fallback.js';
 import { logPrompt, logResponse } from './debug.js';
+import { recordUsage } from './usage.js';
 
 /**
  * LLM-backed narrator. Streams prose via the AI SDK and falls back to the
@@ -54,7 +55,7 @@ export class LLMNarrator implements Narrator {
     if (prefix) emit('\n\n');
 
     try {
-      const { handle } = narratorModel();
+      const { handle, provider, model } = narratorModel();
       // Slim the perception once and share it between the system prompt
       // (which gates conditional sections on perception fields) and the
       // user prompt (which embeds the perception JSON). This keeps the
@@ -69,6 +70,7 @@ export class LLMNarrator implements Narrator {
       const userPrompt = buildUserPrompt(restEvents, world, perceptionForPrompt);
       const systemPrompt = buildNarratorSystem(restEvents, perceptionForPrompt);
       logPrompt({ role: 'narrator', system: systemPrompt, prompt: userPrompt });
+      const t0 = Date.now();
       const result = streamText({
         model:  handle,
         system: systemPrompt,
@@ -83,6 +85,17 @@ export class LLMNarrator implements Narrator {
       // Surface stream-level errors. textStream completes silently on
       // provider failures; awaiting the final text promise is what throws.
       await result.text;
+      // Usage is a promise on the stream result — it resolves once the
+      // provider has closed the stream and emitted final counts.
+      const usage = await result.usage;
+      recordUsage({
+        role:         'narrator',
+        provider,
+        model,
+        inputTokens:  usage.inputTokens  ?? 0,
+        outputTokens: usage.outputTokens ?? 0,
+        durationMs:   Date.now() - t0,
+      });
 
       const body = chunks.join('');
       logResponse({ role: 'narrator', payload: body });

@@ -14,3 +14,12 @@ export {
 export { LLMParser }   from './parser-llm.js';
 export { LLMNarrator } from './narrator-llm.js';
 export { logPrompt, logResponse, isPromptsDebug, promptsDebugLevel } from './debug.js';
+export {
+  recordUsage,
+  resetUsage,
+  usageSummary,
+  usageLevel,
+  isUsageEnabled,
+  getUsageRecords,
+  type UsageRecord,
+} from './usage.js';

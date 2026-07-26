@@ -6,6 +6,7 @@ import { parserModel } from './models.js';
 import { PARSER_SYSTEM } from './prompts.js';
 import { FallbackParser } from '../parser-fallback.js';
 import { logPrompt, logResponse } from './debug.js';
+import { recordUsage } from './usage.js';
 
 /**
  * LLM-backed parser. Strategy:
@@ -36,14 +37,23 @@ export class LLMParser implements Parser {
 
     let actions: Action[];
     try {
-      const { handle } = parserModel();
+      const { handle, provider, model } = parserModel();
       const userPrompt = buildUserPrompt(input, perception);
       logPrompt({ role: 'parser', system: PARSER_SYSTEM, prompt: userPrompt });
-      const { object } = await generateObject({
+      const t0 = Date.now();
+      const { object, usage } = await generateObject({
         model:  handle,
         schema: ActionsSchema,
         system: PARSER_SYSTEM,
         prompt: userPrompt,
+      });
+      recordUsage({
+        role:         'parser',
+        provider,
+        model,
+        inputTokens:  usage.inputTokens  ?? 0,
+        outputTokens: usage.outputTokens ?? 0,
+        durationMs:   Date.now() - t0,
       });
       logResponse({ role: 'parser', payload: object });
       actions = object.actions.map(parsedActionToAction);
