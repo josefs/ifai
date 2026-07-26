@@ -31,8 +31,16 @@ describe('buildThrenody — Contested Casualty cast', () => {
     expect(roomOf(w, aslin!)).toBe(balcony);
   });
 
+  it('places Kessa at the memorial wall', () => {
+    const memorial = findByName('memorial wall');
+    const kessa = findByName('Kessa');
+    expect(memorial).toBeDefined();
+    expect(kessa).toBeDefined();
+    expect(roomOf(w, kessa!)).toBe(memorial);
+  });
+
   it('every new NPC has persona, knows, and dialogueMemory wired', () => {
-    for (const name of ['Khaleth', 'Tasen', 'Saen-of-Three-Notes', 'Aslin Keer']) {
+    for (const name of ['Khaleth', 'Tasen', 'Saen-of-Three-Notes', 'Aslin Keer', 'Kessa']) {
       const id = findByName(name)!;
       const npc = w.get(id, 'npc');
       expect(npc?.persona, `${name} persona`).toBeTruthy();
@@ -47,6 +55,7 @@ describe('buildThrenody — Contested Casualty cast', () => {
       { name: 'Khaleth',               key: 'iren-vass'       },
       { name: 'Tasen',                 key: 'iren-vass'       },
       { name: 'Aslin Keer',            key: 'iren-vass'       },
+      { name: 'Kessa',                 key: 'iren-vass'       },
       { name: 'Saen-of-Three-Notes',   key: 'truth-medic-present' },
       { name: 'station terminal',      key: 'iren-vass-record' },
     ];

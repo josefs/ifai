@@ -358,6 +358,15 @@ export function buildThrenody(): World {
           "a translator. I have not been asked to reconcile this.",
         aliases: ['aslin record', 'keer manifest', 'the translator record'],
       },
+      'kessa': {
+        text:
+          "Kessa arrives at the memorial wall at oh-six-thirty, station " +
+          "time, and leaves at the shift-bell. She has done this every day " +
+          "for four years, two months, and eleven days. Her partner, " +
+          "Deneth, is on the third panel, second column. I keep his etching " +
+          "a little deeper than the others. She asked me to.",
+        aliases: ['the widow', 'kessa', 'the mourner', 'vorthi widow', 'deneth widow'],
+      },
     } },
     dialogueMemory: { entries: [] },
     container: { contents: [] },
@@ -473,6 +482,15 @@ export function buildThrenody(): World {
           "speak there together I will lend you one — when I trust the " +
           "ear it goes over.",
         aliases: ['mask', 'the mask', 'breath mask', 'methane mask'],
+      },
+      'kessa': {
+        text:
+          "Kessa keeps vigil at the wall each day. She is Hearth, and she " +
+          "is one of ours in a way none of the delegations here can be. " +
+          "If you have gone to the wall and she has spoken to you, then " +
+          "you have already learned more about our grief than most humans " +
+          "learn in a lifetime. Treat what she gave you accordingly.",
+        aliases: ['the widow', 'kessa', 'the mourner', 'deneth widow'],
       },
     } },
     dialogueMemory: { entries: [] },
@@ -766,6 +784,122 @@ export function buildThrenody(): World {
     } },
   });
   moveInto(w, aslin, balcony);
+
+  /* ------------------------------- Kessa --------------------------------- *
+   *
+   * A Vorthi Hearth war-widow keeping vigil at the memorial wall. Kessa is
+   * an emotional counterweight to the political NPCs: she carries no plot
+   * mechanics, no gated evidence, no ending consequence. She exists to
+   * make the memorial feel occupied — a person, not a monument — and to
+   * offer a warm, personal angle on Iren Vass before Khaleth's gated
+   * geopolitical account unlocks. Her presence subtly frames what the
+   * player brings to the wall: she softens for `sacred` and `vorthi`
+   * offerings and closes down when handed `evidence`.
+   */
+  const kessa = w.newEntity({
+    name: { value: 'Kessa', aliases: ['widow', 'the widow', 'vorthi widow', 'the mourner'] },
+    description: { text:
+      'A slight Vorthi in worn Hearth grey, seated on the low bench opposite ' +
+      'the wall. A braided chime-cord — the mourning kind, dulled to grey ' +
+      'with long wearing — is looped once around her left wrist. She does ' +
+      'not look up when you enter, but her breath-mask is turned a fraction ' +
+      'toward you: she has heard.' },
+    npc: {
+      persona:
+        "Kessa, a Vorthi Hearth war-widow. Keeps daily vigil at the memorial " +
+        "wall for her partner Deneth, killed four years ago in the border " +
+        "action that also cost Iren Vass her clinic. Speaks softly, without " +
+        "hurry. Grief is her steady weather, not her surface. Refuses to " +
+        "discuss the current ceasefire in political terms; the wall does not " +
+        "ask for treaties. Will speak Deneth's name aloud in the Vorthi " +
+        "naming-rite if the player offers her a sacred object — a small " +
+        "consolation freely given, not a bargain. Knew Iren personally; " +
+        "will speak of her as a person, not as evidence. Uses the Hearth " +
+        "register: measured, faintly archaic, warm at the edges.",
+      species: 'vorthi',
+      mood: 'grieving',
+      trust: 45,
+    },
+    species: { id: 'vorthi' },
+    knows: { facts: {
+      'kessa-herself': {
+        text:
+          "Kessa. Hearth, by birth and by choosing. I come here in the " +
+          "mornings and stay until the shift-bell. It is not much of a " +
+          "life, but it is mine, and it is his.",
+        aliases: ['yourself', 'you', 'the widow', 'her', 'kessa'],
+      },
+      'deneth': {
+        text:
+          "Deneth. He wore Hearth grey and walked the long watch on the " +
+          "old border for eleven years. He is on this wall — third panel, " +
+          "second column, near the top. The etching is deeper than the " +
+          "others because I asked, and the station AI was kind.",
+        aliases: ['her partner', 'the partner', 'my partner', 'deneth', 'the husband', 'long watch'],
+      },
+      'the-memorial': {
+        text:
+          "The wall is Threnody's own gesture. She built it in the years " +
+          "when no delegation would agree on whose dead should be counted " +
+          "first, and so she counted them all, and left the counting where " +
+          "any of us could see it. It is the honest thing on this station.",
+        aliases: ['memorial', 'wall', 'the wall', 'the names', 'the memorial'],
+      },
+      'naming-rite': {
+        text:
+          "When a Hearth mourner is offered something sacred by a stranger, " +
+          "we return the gift with a name — spoken aloud, once, so that the " +
+          "air remembers. It is not a bargain. It is only what the dead are " +
+          "owed when someone else has done the harder work of remembering.",
+        aliases: ['the rite', 'naming', 'hearth rite', 'name spoken', 'the naming'],
+      },
+      'iren-vass': {
+        text:
+          "I knew Iren. She kept my brother-in-law alive three days longer " +
+          "than the wound wanted him to live. She was tired all the time " +
+          "and she was kind anyway. Whatever the delegations are saying about " +
+          "her death this week — she was a person before she was a symbol. " +
+          "Try to remember that.",
+        aliases: ['iren', 'vass', 'the medic', 'the human medic', 'the doctor'],
+      },
+      'the-negotiations': {
+        text:
+          "The talks. They will end however they end. Grief is longer than " +
+          "any ceasefire I have watched signed or broken. I will still be " +
+          "here in the morning.",
+        aliases: ['ceasefire', 'talks', 'negotiations', 'politics', 'the treaty'],
+      },
+    } },
+    dialogueMemory: { entries: [] },
+    container: { contents: [] },
+    tagReactions: { notes: {
+      'sacred':
+        'Softens. Will accept the object briefly in both hands, and — if ' +
+        'she chooses — return the gesture by speaking Deneth\'s name aloud, ' +
+        'the Hearth naming-rite. Does not thank the giver in words.',
+      'vorthi':
+        'Recognises kin. Uses the informal Hearth address; her posture ' +
+        'unstiffens by a fraction.',
+      'memorial':
+        'Nods once, slowly. Speaks of the dead by name only when the room ' +
+        'is ready for it.',
+      'evidence':
+        'Closes down. Will not let the dead be used as leverage; asks the ' +
+        'bearer to take the object away from the wall before speaking further.',
+      'credential':
+        'Faintly amused, faintly sad. "The wall does not ask for papers." ' +
+        'Neither impressed nor offended.',
+      'human-delegation':
+        'Quiet, but not cold. Treats the office with the same courtesy she ' +
+        'gives everyone who comes to the wall — no more, no less.',
+      'surveillance-defying':
+        'Indifferent. What is said at the wall is said to the dead, and the ' +
+        'dead are outside every treaty.',
+      'mundane':
+        'Brief, gentle acknowledgement. Returns her gaze to the wall.',
+    } },
+  });
+  moveInto(w, kessa, memorial);
 
   /* ----------------------------- Carried items --------------------------- */
 
