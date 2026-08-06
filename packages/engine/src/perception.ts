@@ -19,6 +19,13 @@ export interface PerceivedEntity {
   aliases: string[];
   portable: boolean;
   /**
+   * True if this entity is scenery — examinable but not enumerated in
+   * the room's rendered description. Used by the narrator to skip
+   * enumeration, and by the parser as a hint that "look at the X" /
+   * "look through the X" refers to a real (though ambient) entity.
+   */
+  scenery: boolean;
+  /**
    * The entity's authored description, included so the parser LLM can
    * recognize when a player's phrasing refers to a feature *of* the
    * entity rather than the entity itself ("look at the delegation
@@ -136,6 +143,7 @@ function describeEntity(world: World, eid: EntityId): PerceivedEntity {
     name: nameComp?.value ?? `entity-${eid}`,
     aliases: nameComp?.aliases ?? [],
     portable: world.has(eid, 'portable'),
+    scenery:  world.has(eid, 'scenery'),
     ...(desc ? { description: desc } : {}),
     ...(op ? { open: op.isOpen, locked: op.locked } : {}),
   };

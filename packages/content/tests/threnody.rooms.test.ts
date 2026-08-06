@@ -50,4 +50,34 @@ describe('buildThrenody — Contested Casualty rooms', () => {
     expect(ex.spinward).toBe(lounge);
     expect(ex.up).toBe(balcony);
   });
+
+  it('every room has at least three scenery entities', () => {
+    // Scenery makes room prose parseable — "look at the window",
+    // "examine the deck". Every room in the slice should carry a
+    // handful so the parser has something to bind ambient references
+    // to instead of degrading to a whole-room `look`.
+    const roomNames = [
+      'aide quarters', 'corridor', 'neutral lounge',
+      'observation balcony', 'memorial wall', 'methane chamber',
+    ];
+    for (const roomName of roomNames) {
+      const roomId = findByName(roomName)!;
+      const contents = w.get(roomId, 'container')?.contents ?? [];
+      const scenery = contents.filter(id => w.has(id, 'scenery'));
+      expect(scenery.length,
+        `${roomName} should have >= 3 scenery entities, has ${scenery.length}`,
+      ).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('scenery entities are not portable', () => {
+    // Scenery is fixed room fiction: a window bolted flush to the
+    // bulkhead, a memorial wall's script. It should never be
+    // `take`-able.
+    for (let i = 0; i < 10_000; i++) {
+      if (!w.has(i, 'scenery')) continue;
+      const name = w.get(i, 'name')?.value ?? `entity-${i}`;
+      expect(w.has(i, 'portable'), `${name} is scenery and must not be portable`).toBe(false);
+    }
+  });
 });

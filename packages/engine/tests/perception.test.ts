@@ -57,3 +57,42 @@ describe('perception: entity descriptions', () => {
     expect(lamp).not.toHaveProperty('description');
   });
 });
+
+/**
+ * Scenery — ambient examinable features (windows, bunks, ceiling panels)
+ * that must be resolvable by the parser but are marked so the narrator
+ * does not enumerate them in room descriptions.
+ */
+describe('perception: scenery flag', () => {
+  it('exposes `scenery: true` for entities tagged as scenery', () => {
+    const w = new World();
+    const room = w.newEntity({
+      room: {}, name: { value: 'room' },
+      description: { text: 'A room.' },
+      container: { contents: [] },
+      ambientLit: { lit: true },
+    });
+    const window = w.newEntity({
+      name: { value: 'window' },
+      description: { text: 'A slit onto the void.' },
+      scenery: {},
+    });
+    const lamp = w.newEntity({ name: { value: 'lamp' }, portable: {} });
+    const player = w.newEntity({
+      player: {}, name: { value: 'you' },
+      container: { contents: [] },
+    });
+    moveInto(w, window, room);
+    moveInto(w, lamp, room);
+    moveInto(w, player, room);
+
+    const p = perceive(w);
+    const percWindow = p.room.visibleEntities.find(e => e.id === window);
+    const percLamp   = p.room.visibleEntities.find(e => e.id === lamp);
+    expect(percWindow?.scenery).toBe(true);
+    expect(percLamp?.scenery).toBe(false);
+    // Scenery is still perceivable — the parser needs it to resolve
+    // "look at the window". It's only the narrator that will filter.
+    expect(percWindow).toBeDefined();
+  });
+});

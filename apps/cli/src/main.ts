@@ -91,6 +91,15 @@ async function main() {
       rl.prompt();
       continue;
     }
+    // `help` / `?` — meta command. Prints the verb list; does not
+    // spend a turn. Kept deliberately short so a new player can absorb
+    // the whole thing at a glance. Meta commands (help, usage, quit,
+    // time) go last so they don't compete with story verbs visually.
+    if (trimmed === 'help' || trimmed === '?') {
+      say(helpText() + '\n');
+      rl.prompt();
+      continue;
+    }
     await renderTurn(world, parser, narrator, agent, llmEnabled, { kind: 'input', input: trimmed }, say);
     if (isGameOver(world)) break;
     rl.prompt();
@@ -327,6 +336,29 @@ function isGameOver(world: World): boolean {
     if (s.resolved !== undefined) return true;
   }
   return false;
+}
+
+/**
+ * Short verb list shown on `help` / `?`. Grouped by the shape of the
+ * command so a new player can scan and try one. Story verbs first,
+ * meta commands second, so a new player finds their way through the
+ * fiction before the tooling.
+ */
+function helpText(): string {
+  return [
+    'You are a junior aide, quietly seconded. The world reads plain English.',
+    '',
+    'Movement:   look, go <direction>, <direction>  (e.g. "spinward", "up")',
+    'Objects:    examine <thing>, take <thing>, drop <thing>, inventory',
+    'People:     talk to <person>, ask <person> about <topic>,',
+    '            tell <person> about <topic>, give <thing> to <person>',
+    'Climax:     present <thing> at <place>  (once you know where)',
+    'Waiting:    wait  (advances time), time  (shows the clock)',
+    '',
+    'Meta:       help, usage / tokens, quit / q',
+    '',
+    "Tip: verbs can be chained with 'and then' or a comma.",
+  ].join('\n');
 }
 
 

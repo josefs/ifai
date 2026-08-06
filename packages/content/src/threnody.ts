@@ -115,6 +115,247 @@ export function buildThrenody(): World {
   w.add(memorial, 'exits', { to: { inward: corridor } });
   w.add(methane,  'exits', { to: { outward: lounge } });
 
+  /* ------------------------------- Scenery ------------------------------ */
+  // Ambient, examinable-only features already implied by the room's
+  // fiction. They exist so parses like "look out the window" or
+  // "examine the bunk" resolve to something specific instead of falling
+  // back on the whole-room `look`. They carry the `scenery` tag so the
+  // narrator will not enumerate them alongside real objects and NPCs.
+  //
+  // Authoring guideline: one sentence, sensory, and consistent with the
+  // room's own description. Don't reveal anything the room description
+  // doesn't already imply — scenery is texture, not backstory.
+
+  // Aide quarters ---------------------------------------------------------
+  const aqWindow = w.newEntity({
+    name: { value: 'slit window', aliases: ['window', 'the window', 'porthole', 'viewport'] },
+    description: { text:
+      'The slit is barely a hand span wide. Past the docking spar, a ' +
+      'sliver of starfield turns with the ring — pinpricks that drift ' +
+      'in the same slow direction the deck seems to lean.' },
+    scenery: {},
+  });
+  moveInto(w, aqWindow, quarters);
+
+  const aqBunk = w.newEntity({
+    name: { value: 'fold-down bunk', aliases: ['bunk', 'bed', 'the bunk'] },
+    description: { text:
+      'Regulation-issue foam over a plate that clips flush to the ' +
+      'bulkhead. Unslept-in. A pale rectangle on the wall marks where ' +
+      'the previous aide taped up something they took with them.' },
+    scenery: {},
+  });
+  moveInto(w, aqBunk, quarters);
+
+  const aqTerminal = w.newEntity({
+    name: { value: 'credentials terminal', aliases: ['terminal', 'the terminal', 'credentials slot'] },
+    description: { text:
+      'A shallow reader set into the desk, its slot glowing a patient ' +
+      'amber. It wants your badge; it will keep wanting it until you ' +
+      'oblige.' },
+    scenery: {},
+  });
+  moveInto(w, aqTerminal, quarters);
+
+  const aqHatch = w.newEntity({
+    name: { value: 'hatch', aliases: ['door', 'the hatch', 'cabin door'] },
+    description: { text:
+      'The standard human-wing hatch: brushed alloy, a soft blue ' +
+      'indicator ring, and a manual pull for when the station\'s ' +
+      'obligingness runs out.' },
+    scenery: {},
+  });
+  moveInto(w, aqHatch, quarters);
+
+  // Neutral lounge --------------------------------------------------------
+  const lgSkylight = w.newEntity({
+    name: { value: 'skylight', aliases: ['the skylight', 'ceiling', 'the ceiling'] },
+    description: { text:
+      'A slow-rotating disc of transparent alloy overhead. The slice of ' +
+      'starfield it frames turns once every few minutes; it is the ' +
+      'lounge\'s way of reminding everyone that the ring is in motion ' +
+      'and no delegate\'s time is special.' },
+    scenery: {},
+  });
+  moveInto(w, lgSkylight, lounge);
+
+  const lgBar = w.newEntity({
+    name: { value: 'bar terminal', aliases: ['bar', 'the bar', 'station terminal', 'ai terminal'] },
+    description: { text:
+      'A polished half-circle counter with a Threnody interface set flush ' +
+      'into its surface. Beverages are dispensed politely and without ' +
+      'commentary. The AI\'s hum is fractionally louder here.' },
+    scenery: {},
+  });
+  moveInto(w, lgBar, lounge);
+
+  const lgSilica = w.newEntity({
+    name: { value: 'silica column', aliases: ['column', 'the column', 'chilled column', 'crystal column'] },
+    description: { text:
+      'A waist-high pillar of chilled, faintly humming glass at the ' +
+      'edge of the seating arc. Frost blooms and retreats on its ' +
+      'surface in patterns that are not quite random — a courtesy ' +
+      'perch for whichever silica envoy is present.' },
+    scenery: {},
+  });
+  moveInto(w, lgSilica, lounge);
+
+  // Corridor -------------------------------------------------------------
+  const coAides = w.newEntity({
+    name: { value: 'aides', aliases: ['crowd', 'the aides', 'delegates', 'passers-by'] },
+    description: { text:
+      'They move in the small, deliberate arcs of people who have been ' +
+      'told twice not to run. Human blues, a scatter of Vorthi ochre, ' +
+      'one silica courier in trailing white. None of them meet your ' +
+      'eyes; all of them look somewhere just past your shoulder.' },
+    scenery: {},
+  });
+  moveInto(w, coAides, corridor);
+
+  const coScrubber = w.newEntity({
+    name: { value: 'scrubber vent', aliases: ['vent', 'the vent', 'scrubber', 'vents'] },
+    description: { text:
+      'A recessed grille breathes the corridor\'s freshly-cycled air ' +
+      'past your face. The metallic tang comes from the vent, not from ' +
+      'you. A tiny green telltale confirms Threnody is, at least in ' +
+      'this respect, healthy.' },
+    scenery: {},
+  });
+  moveInto(w, coScrubber, corridor);
+
+  const coFloor = w.newEntity({
+    name: { value: 'deck plating', aliases: ['deck', 'the deck', 'floor', 'the floor'] },
+    description: { text:
+      'Standard ring plating with the barely-perceptible Coriolis tilt ' +
+      'that gives every hallway its faint sense of walking downhill in ' +
+      'one direction and uphill in the other.' },
+    scenery: {},
+  });
+  moveInto(w, coFloor, corridor);
+
+  // Memorial wall --------------------------------------------------------
+  const mmNamesHuman = w.newEntity({
+    name: { value: 'Standard names', aliases: ['human names', 'the standard script', 'standard script'] },
+    description: { text:
+      'Row on row of names in plain Standard letters, each one lit from ' +
+      'behind so it floats a hair off the metal. Some rows are recent — ' +
+      'the etching still bright; some are old enough that the backlight ' +
+      'has yellowed the alloy around them.' },
+    scenery: {},
+  });
+  moveInto(w, mmNamesHuman, memorial);
+
+  const mmNamesHearth = w.newEntity({
+    name: { value: 'Hearth script', aliases: ['hearth names', 'hearth script', 'the hearth script'] },
+    description: { text:
+      'The rounded, hearth-warmth glyphs the Vorthi civilian lines use ' +
+      'for their dead. They are set beside — not above, not below — the ' +
+      'War-Crest columns. Threnody made that choice, and the Hearth ' +
+      'noticed.' },
+    scenery: {},
+  });
+  moveInto(w, mmNamesHearth, memorial);
+
+  const mmNamesWarcrest = w.newEntity({
+    name: { value: 'War-Crest script', aliases: ['war-crest names', 'war-crest script', 'the war-crest script', 'warcrest script'] },
+    description: { text:
+      'The sharper, angular glyphs of the Vorthi War-Crest. Each name is ' +
+      'framed by a small notched border — a soldier\'s honour that the ' +
+      'civilian Hearth do not use. Threnody set them beside the Hearth ' +
+      'names, not above; the War-Crest have not yet decided how they ' +
+      'feel about that.' },
+    scenery: {},
+  });
+  moveInto(w, mmNamesWarcrest, memorial);
+
+  const mmNamesSilica = w.newEntity({
+    name: { value: 'silica spirals', aliases: ['silica names', 'spirals', 'the spirals', 'faceted spirals'] },
+    description: { text:
+      'Faceted spirals cut into the metal, each one a name in the ' +
+      'silica\'s own written mode. They catch the backlight differently ' +
+      'than the alphabetic scripts — a slow, refracting flicker as you ' +
+      'walk past, as if the names themselves were breathing.' },
+    scenery: {},
+  });
+  moveInto(w, mmNamesSilica, memorial);
+
+  const mmHum = w.newEntity({
+    name: { value: 'station hum', aliases: ['hum', 'the hum', 'threnody hum', 'ai hum'] },
+    description: { text:
+      'The Threnody presence is quieter here than at the lounge terminal ' +
+      'but unmistakably the same voice — a low, patient tone that seems ' +
+      'to come from inside the wall itself. If the station has a ' +
+      'chapel, this is where it prays.' },
+    scenery: {},
+  });
+  moveInto(w, mmHum, memorial);
+
+  // Methane chamber ------------------------------------------------------
+  const mtDeck = w.newEntity({
+    name: { value: 'hexagonal deck', aliases: ['deck', 'the deck', 'hex deck', 'floor', 'the floor', 'hexagons'] },
+    description: { text:
+      'Wide hexagonal plates the Vorthi lay under their feet at home. ' +
+      'The seams glow a shade dimmer than the plates themselves, so ' +
+      'the pattern seems to breathe with the orange light.' },
+    scenery: {},
+  });
+  moveInto(w, mtDeck, methane);
+
+  const mtLocks = w.newEntity({
+    name: { value: 'breath-mask locks', aliases: ['locks', 'the locks', 'airlock', 'breath locks', 'mask locks'] },
+    description: { text:
+      'A double set of interlocked seals stands between this chamber ' +
+      'and the lounge outside. They will not disengage without a mask ' +
+      'reading positive on both sides of the barrier — Threnody is ' +
+      'careful even about the rooms it does not listen to.' },
+    scenery: {},
+  });
+  moveInto(w, mtLocks, methane);
+
+  const mtCeiling = w.newEntity({
+    name: { value: 'ceiling', aliases: ['the ceiling', 'panels', 'roof'] },
+    description: { text:
+      'Clean, unbroken alloy. No camera nubs, no microphone grilles, no ' +
+      'sensor bumps of any kind. Somewhere between "reassuring" and ' +
+      '"conspicuous", depending on who you ask.' },
+    scenery: {},
+  });
+  moveInto(w, mtCeiling, methane);
+
+  // Observation balcony --------------------------------------------------
+  const obGlass = w.newEntity({
+    name: { value: 'glass wall', aliases: ['glass', 'the glass', 'wall', 'the wall', 'window', 'the window'] },
+    description: { text:
+      'A single curved pane of one-way alloy glass, the length of the ' +
+      'balcony. From up here the negotiation chamber below reads like a ' +
+      'stage set: chairs, translators\' booths, the low dais where Saen ' +
+      'will sit. Nobody looking up sees anything but ceiling.' },
+    scenery: {},
+  });
+  moveInto(w, obGlass, balcony);
+
+  const obChamberBelow = w.newEntity({
+    name: { value: 'negotiation chamber', aliases: ['chamber', 'the chamber', 'floor below', 'delegations'] },
+    description: { text:
+      'Empty for now, but not for long. Chairs are set in the Threnody ' +
+      'arrangement — Hearth to one side of the dais, War-Crest to the ' +
+      'other, human delegation opposite, the silica courtesy column ' +
+      'already frosted at the rim. An unassigned chair sits a little ' +
+      'outside the arc.' },
+    scenery: {},
+  });
+  moveInto(w, obChamberBelow, balcony);
+
+  const obRail = w.newEntity({
+    name: { value: 'rail', aliases: ['the rail', 'railing', 'the railing'] },
+    description: { text:
+      'A brushed metal bar along the glass wall, worn a shade smoother ' +
+      'in the middle from the hands of every aide who has stood here ' +
+      'and watched a negotiation they were not invited to.' },
+    scenery: {},
+  });
+  moveInto(w, obRail, balcony);
+
   /* -------------------------------- Items -------------------------------- */
 
   const credentials = w.newEntity({
@@ -194,12 +435,22 @@ export function buildThrenody(): World {
         "incline your head. They were on the border the day Iren died.",
       aliases: ['saen', 'the silica', 'the crystal envoy', 'the singing crystal'],
     },
-    'the-datapad': {
+    'seating-chart': {
       text:
-        "Yes — the seating chart. Read the flagged note before you go " +
-        "anywhere else. There's a name on it I want you to watch for: " +
-        "Iren Vass.",
-      aliases: ['the datapad', 'the pad', 'the briefing', 'the seating chart'],
+        "The chart's simple enough on paper. Us at the arc; Vorthi on the " +
+        "curve to our left — Khaleth at the head, Tasen at his right hand. " +
+        "That ordering is deliberate. Hearth-Crest protocol means whichever " +
+        "of them speaks last gets the closing word, and Khaleth arranged it " +
+        "so he does. Saen-of-Three-Notes sits alone on the silica dais " +
+        "above and behind — neutral, elevated, and out of any human's " +
+        "sightline. Then there's a fourth chair marked 'observer', " +
+        "unassigned. Watch that one. If Aslin Keer ends up in it, we have " +
+        "a different problem than the one we came here to solve.",
+      aliases: [
+        'the datapad', 'the pad', 'the chart', 'the seating chart',
+        'seating', 'seats', 'the seating', 'the seating arrangement',
+        'the arrangement', 'who sits where', 'seat',
+      ],
     },
     'your-role': {
       text:
@@ -245,6 +496,29 @@ export function buildThrenody(): World {
         "held. I prefer rooms with one exit and people who know which " +
         "one it is.",
       aliases: ['yourself', 'you', 'mira', 'voss', 'your past'],
+    },
+    // First-encounter briefing. Delivered whenever the player approaches
+    // Mira for the first time — either via the proactive-on-entry rule
+    // or via a manual `talk to Mira` that the engine promotes to
+    // `approached` because dialogueMemory is still empty. The LLM agent
+    // paraphrases in-voice; the fallback agent returns this text
+    // verbatim. Keep it short, name the mission, the deadline, the key
+    // people, and ONE first step the player can take right now.
+    'briefing': {
+      text:
+        "Good — you're here. Listen carefully; I won't repeat this. " +
+        "You're my ears, not my mouth. In just under three hours the " +
+        "opening session convenes, and before then I need to know what " +
+        "really happened to Iren Vass on the border twelve days ago. " +
+        "The Vorthi delegation are in the neutral lounge — Khaleth " +
+        "speaks for the Hearth and will only discuss Iren after a " +
+        "memorial gesture; Tasen speaks for the War-Crest and is " +
+        "already convinced we killed her. The silica envoy, " +
+        "Saen-of-Three-Notes, is there too — treat them with care. " +
+        "Start with Khaleth. Bring me a picture before the chamber " +
+        "doors open, and if you meet a man named Aslin Keer on the " +
+        "balcony, listen but promise nothing.",
+      aliases: ['the briefing', 'the mission', 'what to do', 'orders', 'my orders'],
     },
   };
 

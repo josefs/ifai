@@ -41,8 +41,28 @@ export const converseCarryOut = defineRule({
     const speaker = w.player();
     // Build the event with only the fields relevant to the mode so the
     // narrator and agent layer don't have to handle stray undefineds.
+    //
+    // First-encounter escalation: if the player greets a proactive NPC
+    // for the first time (empty dialogueMemory), promote the interaction
+    // to a `noticed` event — the same shape the after-move rule uses
+    // for room-entry greetings. The CLI turns `noticed` into an
+    // `approached` exchange, which is what surfaces mission briefings.
+    // Without this promotion the player who enters the room and *then*
+    // types `talk to Mira` would get a bare "Yes?" acknowledgement,
+    // because the greet-mode agent contract is explicitly "acknowledge,
+    // do not volunteer".
     if (a.mode === 'greet') {
-      ctx.emit({ kind: 'addressed', speaker, target: a.target, mode: 'greet' });
+      const shouldEscalate =
+        w.get(a.target, 'proactive')?.greetOnEntry === true &&
+        (w.get(a.target, 'dialogueMemory')?.entries.length ?? 0) === 0;
+      if (shouldEscalate) {
+        ctx.emit({
+          kind: 'noticed', observer: a.target, target: speaker,
+          trigger: 'enteredRoom',
+        });
+      } else {
+        ctx.emit({ kind: 'addressed', speaker, target: a.target, mode: 'greet' });
+      }
     } else if (a.mode === 'say') {
       ctx.emit({
         kind: 'addressed', speaker, target: a.target, mode: 'say',

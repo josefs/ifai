@@ -36,6 +36,23 @@ describe('FallbackDialogueAgent', () => {
     expect(r.revealedTopicsToPlayer).toBeUndefined();
   });
 
+  it('delivers a `briefing` fact verbatim on approached when authored', async () => {
+    const ctx: NpcContext = {
+      ...makeCtx(),
+      facts: {
+        ...makeCtx().facts,
+        briefing: {
+          text: 'Listen carefully. The mission: X. The deadline: three hours. First step: talk to Y.',
+          aliases: ['the briefing'],
+        },
+      },
+    };
+    const r = await agent.respond(w, ctx, { mode: 'approached' });
+    expect(r.speech).toBe(
+      'Listen carefully. The mission: X. The deadline: three hours. First step: talk to Y.',
+    );
+  });
+
   it('matches an ask via direct topic id', async () => {
     const r = await agent.respond(w, makeCtx(), { mode: 'ask', topicPhrase: 'negotiations' });
     expect(r.speech).toBe('About the talks.');

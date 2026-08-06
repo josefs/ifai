@@ -144,11 +144,19 @@ function buildUserPrompt(npc: NpcContext, ex: Exchange): string {
     ex.mode === 'greet'
       ? 'The player greets you.'
       : ex.mode === 'approached'
-      ? 'The player has just walked into the room. They have not spoken yet. ' +
-        'Open the conversation yourself with a brief, in-character line — ' +
-        'a greeting plus one concrete hook (a topic to ask about, a place ' +
-        'to go, or something you need from them). Do not dump everything ' +
-        'you know; one hook is enough. Stay in persona.'
+      ? npc.facts['briefing']
+        ? 'The player has just arrived and this is your FIRST exchange with ' +
+          'them. Deliver the mission briefing below in your own voice — ' +
+          'paraphrase and tighten, do not read it back verbatim, but cover ' +
+          'every concrete pointer it names (goal, deadline, people, first ' +
+          'step). This is a one-time briefing; be direct. Set ' +
+          'revealedTopicsToPlayer to ["briefing"].\n' +
+          '  BRIEFING: ' + JSON.stringify(npc.facts['briefing']!.text)
+        : 'The player has just walked into the room. They have not spoken yet. ' +
+          'Open the conversation yourself with a brief, in-character line — ' +
+          'a greeting plus one concrete hook (a topic to ask about, a place ' +
+          'to go, or something you need from them). Do not dump everything ' +
+          'you know; one hook is enough. Stay in persona.'
       : ex.mode === 'easter-egg'
       ? `The player just made an Earth pop-culture reference your ` +
         `character does not recognise (franchise id: ${ex.easterEggId ?? 'unknown'}). ` +

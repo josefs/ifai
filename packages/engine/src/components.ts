@@ -70,6 +70,17 @@ export interface ComponentMap {
   container:   { contents: EntityId[] };
   /** Tag — this entity can be picked up. */
   portable:    Record<string, never>;
+  /**
+   * Tag — this entity is scenery: named-and-examinable, but not portable
+   * and not enumerated in room descriptions. Use for windows, bunks,
+   * terminals, ceiling panels, ambient crowds — anything the room's
+   * fiction mentions that the player might reasonably try to examine
+   * ("look at the window") but that shouldn't be listed as a distinct
+   * object when the room is described. The narrator MUST NOT enumerate
+   * scenery on `look`; the parser SHOULD resolve player references to
+   * them the same as any other visible entity.
+   */
+  scenery:     Record<string, never>;
   /** Openable (and maybe lockable). */
   openable:    { isOpen: boolean; locked: boolean; keyId?: EntityId };
   /** Light source — illuminates its current room when `lit`. */

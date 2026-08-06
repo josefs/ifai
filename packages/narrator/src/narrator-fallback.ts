@@ -84,9 +84,14 @@ function renderLook(p: Perception): string {
     return lines.join('\n');
   }
   if (p.room.description) lines.push(p.room.description);
-  if (p.room.visibleEntities.length) {
+  // Enumerate only non-scenery entities. Scenery (windows, bunks, ceiling
+  // panels) is examinable but authored to be implicit in the room prose;
+  // listing it here would clutter every `look` with things the description
+  // already implies.
+  const listable = p.room.visibleEntities.filter(e => !e.scenery);
+  if (listable.length) {
     lines.push('You can see: ' +
-      p.room.visibleEntities.map(e => e.name).join(', ') + '.');
+      listable.map(e => e.name).join(', ') + '.');
   }
   if (p.room.exits.length) {
     lines.push('Exits: ' + p.room.exits.map(formatExit).join(', ') + '.');

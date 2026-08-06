@@ -74,6 +74,51 @@ describe('buildThrenody — Contested Casualty cast', () => {
     expect(facts['aslin-keer-truth']).toBeDefined();
   });
 
+  it('Mira is proactive and carries a first-encounter briefing', () => {
+    const id = findByName('Mira')!;
+    expect(w.get(id, 'proactive')?.greetOnEntry).toBe(true);
+    const briefing = w.get(id, 'knows')?.facts['briefing'];
+    expect(briefing).toBeDefined();
+    // The briefing must name the mission-critical concretes so a new
+    // player can act on it without further hand-holding.
+    expect(briefing!.text).toMatch(/iren/i);
+    expect(briefing!.text).toMatch(/khaleth/i);
+    expect(briefing!.text).toMatch(/three hours|opening session/i);
+  });
+
+  it('Mira has a substantive seating-chart topic covering positions and tactical read', () => {
+    const id = findByName('Mira')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    const chart = facts['seating-chart'];
+    expect(chart, 'Mira should carry a `seating-chart` fact').toBeDefined();
+    // Names the three delegations by their principals so the answer is
+    // usable, not generic.
+    expect(chart!.text).toMatch(/khaleth/i);
+    expect(chart!.text).toMatch(/tasen/i);
+    expect(chart!.text).toMatch(/saen/i);
+    // The fourth chair / observer / Aslin hook is the point of the fact.
+    expect(chart!.text).toMatch(/observer|fourth/i);
+    expect(chart!.text).toMatch(/aslin/i);
+    // Aliases cover natural phrasings the player is likely to try.
+    const aliases = chart!.aliases ?? [];
+    expect(aliases).toContain('the seating chart');
+    expect(aliases).toContain('the datapad');
+  });
+
+  it('no Mira fact aliases "the briefing" other than the mission briefing itself', () => {
+    // Guard against a specific past collision: `the-datapad` used to
+    // alias 'the briefing', shadowing the actual mission-brief topic.
+    const id = findByName('Mira')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    for (const [key, f] of Object.entries(facts)) {
+      if (key === 'briefing') continue;
+      expect(
+        f.aliases ?? [],
+        `${key} must not alias 'the briefing' (collides with mission brief)`,
+      ).not.toContain('the briefing');
+    }
+  });
+
   it('Threnody knows the memorial wall and holds the casualty record', () => {
     const id = findByName('station terminal')!;
     const facts = w.get(id, 'knows')?.facts ?? {};

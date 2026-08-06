@@ -81,7 +81,13 @@ function greetingFor(npc: NpcContext): string {
 }
 
 function approachedFor(npc: NpcContext): string {
-  void npc;
+  // If the author supplied a `briefing` fact on this NPC, deliver it
+  // verbatim as the first-encounter line. This is the fallback-agent
+  // path for the first-encounter briefing feature — the LLM agent
+  // reads the same key and paraphrases it in-character. Any NPC with
+  // `proactive: { greetOnEntry: true }` can opt in by adding the fact.
+  const briefing = npc.facts['briefing']?.text;
+  if (briefing) return briefing;
   return `Ah — you're here. We should talk.`;
 }
 

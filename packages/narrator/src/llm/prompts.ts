@@ -70,6 +70,19 @@ Resolving "feature of" references:
   the room id or a destination id as a target — those are not entities
   in the visible/inventory sets and the engine will reject them.
 
+"Look at X" / "look out X" / "look through X" / "look inside X":
+- All of these are EXAMINE commands, not room-look commands. The player
+  is asking about a specific thing (a window, a hatch, a container, a
+  panel), not the room. Emit \`examine\` with target = that entity.
+- Many rooms include \`scenery: true\` entities (windows, terminals,
+  benches, bunks, ambient features). These are valid examine targets
+  — treat them exactly like any other visible entity. A slit window
+  named "window" in aide quarters resolves "look out the window" →
+  examine the window entity.
+- Only emit a bare \`look\` (room description) when the player writes
+  "look" alone, "look around", "look at the room", "where am I", or
+  similar whole-room queries with no specific target.
+
 Available action kinds:
   look                       — describe the current room
   inventory                  — list what the player is carrying
@@ -210,6 +223,17 @@ export const NARRATOR_LOOK_MOVE = `
 ROOM DESCRIPTION (this turn includes a look or move):
 - Describe the new room: name and a short evocative line about what's
   distinctive — sensory texture, what's visible.
+
+SCENERY — do NOT enumerate:
+- Some visible entities carry \`scenery: true\` in the perception. These
+  are ambient features already implied by the room's authored fiction
+  (windows, benches, terminals, ceiling panels, background crowds).
+  Do NOT list them, name them, or introduce them as fresh objects when
+  the room is described. They exist so the parser can resolve
+  "look at the window" — nothing more. If nothing else in the events
+  references them, they should not appear in your prose.
+- Non-scenery entities (portable items, NPCs) are still worth calling
+  out briefly.
 
 EXITS — woven into the prose, never as a list:
 - Each exit in the perception has a "dir" (e.g. spinward, inward, up, out)

@@ -68,6 +68,41 @@ describe('converse rules', () => {
     const failed = events.find(e => e.kind === 'failed') as Extract<Event, { kind: 'failed' }>;
     expect(failed?.reason).toBe('not_here');
   });
+
+  it('promotes a first `greet` on a proactive NPC to a `noticed` event', () => {
+    const { w, npc } = makeWorld();
+    // Mark this NPC as proactive with empty dialogueMemory (default in makeWorld).
+    w.add(npc, 'proactive', { greetOnEntry: true });
+    const { events } = apply(w, { kind: 'converse', mode: 'greet', target: npc });
+    // No `addressed` event; a `noticed` event carries the promotion.
+    expect(events.find(e => e.kind === 'addressed')).toBeUndefined();
+    const noticed = events.find(e => e.kind === 'noticed') as Extract<Event, { kind: 'noticed' }>;
+    expect(noticed).toBeDefined();
+    expect(noticed.observer).toBe(npc);
+    expect(noticed.trigger).toBe('enteredRoom');
+  });
+
+  it('does NOT promote once dialogue has already happened', () => {
+    const { w, npc, player } = makeWorld();
+    w.add(npc, 'proactive', { greetOnEntry: true });
+    // Simulate a previous exchange by populating dialogueMemory.
+    w.get(npc, 'dialogueMemory')!.entries.push({
+      kind: 'said', speakerId: npc, counterpartId: player, text: 'earlier',
+    });
+    const { events } = apply(w, { kind: 'converse', mode: 'greet', target: npc });
+    const addr = events.find(e => e.kind === 'addressed') as Extract<Event, { kind: 'addressed' }>;
+    expect(addr?.mode).toBe('greet');
+    expect(events.find(e => e.kind === 'noticed')).toBeUndefined();
+  });
+
+  it('does NOT promote greet for non-proactive NPCs', () => {
+    const { w, npc } = makeWorld();
+    // No proactive component.
+    const { events } = apply(w, { kind: 'converse', mode: 'greet', target: npc });
+    const addr = events.find(e => e.kind === 'addressed') as Extract<Event, { kind: 'addressed' }>;
+    expect(addr?.mode).toBe('greet');
+    expect(events.find(e => e.kind === 'noticed')).toBeUndefined();
+  });
 });
 
 describe('respondAsNpc rules', () => {
