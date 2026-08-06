@@ -753,12 +753,13 @@ export function buildThrenody(): World {
       },
       'deneth': {
         text:
-          "Deneth. Vorthi, War-Crest infantry, killed on the second day " +
-          "of the last engagement. His name is on the third panel, " +
-          "second column, in the War-Crest script. Kessa asked me to cut " +
-          "his etching a little deeper than the others. I did.",
+          "Deneth. Vorthi, Hearth, killed on the second day of the last " +
+          "engagement. He walked the long watch on the old border for " +
+          "eleven years. His name is on the third panel, second column, " +
+          "in the Hearth script. Kessa asked me to cut his etching a " +
+          "little deeper than the others. I did.",
         aliases: [
-          'deneth of the war-crest', "kessa's partner", "kessa's husband",
+          'deneth of the hearth', "kessa's partner", "kessa's husband",
           'her partner', 'her husband',
         ],
       },
@@ -1004,6 +1005,30 @@ export function buildThrenody(): World {
     },
     species: { id: 'vorthi' },
     knows: { facts: {
+      'the-hearth': {
+        text:
+          "The Hearth. We are the civilian body of the Vorthi — homes, " +
+          "clinics, the older script, the naming-rite. What sanctifies a " +
+          "life sanctifies a death; a Hearth funeral is not a private " +
+          "matter but a public reckoning. I speak for us because I have " +
+          "watched the reckoning fail. I would like to see it succeed once.",
+        aliases: [
+          'hearth', 'the hearth faction', 'hearth faction', 'my faction',
+          'the civilian vorthi', 'the older tradition',
+        ],
+      },
+      'war-crest': {
+        text:
+          "Our other body. The younger tradition, the military lines. " +
+          "The Hearth does not command them, and they do not obey — we " +
+          "are one people arguing with itself. The cell that came to the " +
+          "clinic was of them. That is a debt they owe, and one we " +
+          "carry.",
+        aliases: [
+          'war crest', 'the war-crest', 'the war crest', 'war-crest faction',
+          'the younger tradition', 'the military vorthi',
+        ],
+      },
       'iren-vass': {
         text:
           "Iren tended our wounded for eleven days. On the twelfth, a " +
@@ -1065,7 +1090,7 @@ export function buildThrenody(): World {
           "Tasen is my colleague and my opponent. We are both Vorthi. " +
           "Neither of us will sign anything the other has not at least " +
           "looked away from.",
-        aliases: ['tasen', 'war-crest', 'the junior envoy', 'the war-crest'],
+        aliases: ['tasen', 'the junior envoy'],
       },
       'iren-coin': {
         text:
@@ -1143,6 +1168,31 @@ export function buildThrenody(): World {
     },
     species: { id: 'vorthi' },
     knows: { facts: {
+      'the-hearth': {
+        text:
+          "Hearth. Old Vorthi. Priests with clean hands who run the " +
+          "field clinics and hold the funerals and never quite ask why " +
+          "the young keep dying. They ran that clinic. They knew what " +
+          "the room was for. When your officers used it they looked at " +
+          "the ceiling. Ask Khaleth about grief. Ask me about who let " +
+          "it happen.",
+        aliases: [
+          'hearth', 'the hearth faction', 'hearth faction', "khaleth's people",
+          'the civilian vorthi', 'the older tradition',
+        ],
+      },
+      'war-crest': {
+        text:
+          "The younger tradition. Ours. The Hearth speaks of us as if we " +
+          "were a lapse; we are a military body of a species at war and " +
+          "we have never pretended otherwise. Yes, the cell at the clinic " +
+          "was ours. Ask me what they were doing there and I will tell " +
+          "you. Ask Khaleth and he will find you a memorial.",
+        aliases: [
+          'war crest', 'the war-crest', 'the war crest', 'my faction',
+          'the younger tradition', 'the military vorthi',
+        ],
+      },
       'iren-vass': {
         text:
           "Your medic? Your medic walked into our clinic with two of your " +
@@ -1197,7 +1247,7 @@ export function buildThrenody(): World {
           "We will sign nothing that lets your intelligence services walk. " +
           "Names, ranks, formal acknowledgement of the operation. Without " +
           "that, this whole station is theatre.",
-        aliases: ['war-crest', 'our position', 'what we want', 'the demand'],
+        aliases: ['our position', 'what we want', 'the demand', 'war-crest position'],
       },
       'maintenance-corridor': {
         text:
@@ -1362,6 +1412,31 @@ export function buildThrenody(): World {
     },
     species: { id: 'human' },
     knows: { facts: {
+      'the-hearth': {
+        text:
+          "Vorthi civilian body. Traditionalist, ritual-heavy; runs the " +
+          "field clinics — and, less officially, the safehouse network " +
+          "those clinics doubled as. My service considered them the " +
+          "mature side of the delegation and preferred to deal with them. " +
+          "I am reviewing that assessment this week.",
+        aliases: [
+          'hearth', 'the hearth faction', 'hearth faction',
+          'the civilian vorthi', 'the older tradition',
+        ],
+      },
+      'war-crest': {
+        text:
+          "Vorthi military body. Younger, sharper, less inclined to " +
+          "distinguish humans from Hearth in their casualty math. My " +
+          "service considered them the negotiation problem. The cell at " +
+          "the clinic was theirs; the version they will tell you about " +
+          "who killed Iren Vass has the merit of being partly true. So " +
+          "does ours.",
+        aliases: [
+          'war crest', 'the war-crest', 'the war crest', 'war-crest faction',
+          'the younger tradition', 'the military vorthi',
+        ],
+      },
       'iren-vass': {
         text:
           "Iren Vass walked into a Vorthi clinic carrying a flash drive " +
@@ -1520,6 +1595,29 @@ export function buildThrenody(): World {
     },
     species: { id: 'vorthi' },
     knows: { facts: {
+      'the-hearth': {
+        text:
+          "We are Hearth. My family, Deneth's family, the wall behind me. " +
+          "It is not a faction to me; it is what I am. Khaleth speaks for " +
+          "us at their tables. What we do at the wall is older than either " +
+          "of us and does not need his permission.",
+        aliases: [
+          'hearth', 'the hearth faction', 'hearth faction', 'my faction',
+          'my people', 'the civilian vorthi',
+        ],
+      },
+      'war-crest': {
+        text:
+          "The younger tradition. Tasen speaks for them. They have their " +
+          "dead on this wall too — the fifth panel, in their script — " +
+          "and I stand for those names on the days their kin cannot come. " +
+          "The Hearth and the War-Crest are one people. The wall does " +
+          "not need to be told that. Everyone else seems to.",
+        aliases: [
+          'war crest', 'the war-crest', 'the war crest', 'war-crest faction',
+          'the younger tradition', 'the military vorthi', "tasen's people",
+        ],
+      },
       'kessa-herself': {
         text:
           "Kessa. Hearth, by birth and by choosing. I come here in the " +

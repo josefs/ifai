@@ -286,4 +286,32 @@ describe('buildThrenody — Contested Casualty cast', () => {
     expect(facts['saen-of-three-notes']!.aliases ?? [])
       .toEqual(expect.arrayContaining(['saen', 'the silica envoy']));
   });
+
+  it('every principal NPC holds `the-hearth` and `war-crest` faction topics', () => {
+    // Second-order Chekhov: Hearth and War-Crest are the two Vorthi
+    // bodies at the heart of the case; every character with a stake
+    // in it names them. Each must be askable about both, from their
+    // own angle. Saen is excluded (silica envoy, binary-search
+    // persona forbids elaboration).
+    for (const name of ['Mira', 'Khaleth', 'Tasen', 'Aslin Keer', 'station terminal', 'Kessa']) {
+      const id = findByName(name)!;
+      const facts = w.get(id, 'knows')?.facts ?? {};
+      expect(facts['the-hearth'], `${name} should hold 'the-hearth'`).toBeDefined();
+      expect(facts['war-crest'], `${name} should hold 'war-crest'`).toBeDefined();
+      expect(facts['the-hearth']!.aliases ?? [], `${name} the-hearth aliases`)
+        .toEqual(expect.arrayContaining(['hearth']));
+      expect(facts['war-crest']!.aliases ?? [], `${name} war-crest aliases`)
+        .toEqual(expect.arrayContaining(['war crest']));
+    }
+  });
+
+  it("Threnody's `deneth` topic aligns with Kessa's canon (Hearth, not War-Crest)", () => {
+    // Kessa's `deneth` fact says "He wore Hearth grey"; Threnody's
+    // faction attribution must not contradict this. Regression guard.
+    const id = findByName('station terminal')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    const deneth = facts['deneth']!;
+    expect(deneth.text.toLowerCase()).toContain('hearth');
+    expect(deneth.text.toLowerCase()).not.toContain('war-crest');
+  });
 });
