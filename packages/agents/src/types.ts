@@ -72,6 +72,29 @@ export interface NpcContext {
    * the engine would block anyway.
    */
   silicaProtocol?: { readyToSpeak: boolean };
+  /**
+   * What the NPC currently perceives — their own room's authored
+   * description and the non-NPC entities in that room (with their own
+   * descriptions). Populated per turn so an LLM agent can answer
+   * conversationally about things the NPC can plainly see ("what
+   * drinks does the bar have?", "what's out that window?") without
+   * every such thing being pre-authored as a fact.
+   *
+   * The distinction with `facts` is deliberate:
+   *   - `facts` are canonical, plot-bearing content the author decided
+   *     the NPC knows. The LLM must not invent new ones or paraphrase
+   *     these away.
+   *   - `perceived` is ambient texture. The LLM may speak about it
+   *     using common sense appropriate to the NPC's persona and
+   *     species, without treating it as revealed plot.
+   *
+   * Fallback agents ignore this field and behave as before.
+   */
+  perceived?: {
+    roomName: string;
+    roomDescription: string;
+    entities: Array<{ name: string; description?: string; scenery: boolean }>;
+  };
 }
 
 /** A tagged entity the NPC perceives this turn. */

@@ -80,4 +80,40 @@ describe('tag system × Threnody content', () => {
     const block = buildReactivityBlock(ctx!)!;
     expect(block).toMatch(/cup of tea \[in the room\]/);
   });
+
+  it("populates NPC perceived context with room + non-NPC entities", () => {
+    // NPCs should be able to answer conversationally about things they
+    // can plainly see (a bar terminal, a slit window). The `perceived`
+    // field is what feeds that ambient block into the LLM prompt.
+    const w = buildThrenody();
+    const mira = findByName(w, 'Mira');
+    const ctx = buildNpcContext(w, mira);
+    expect(ctx!.perceived).toBeDefined();
+    expect(ctx!.perceived!.roomName).toBe('neutral lounge');
+    expect(ctx!.perceived!.roomDescription).toMatch(/skylight/);
+    const names = ctx!.perceived!.entities.map(e => e.name);
+    // Scenery is included so the NPC can speak to it.
+    expect(names).toContain('bar terminal');
+    expect(names).toContain('skylight');
+    // Non-scenery items (cup of tea) are included too.
+    expect(names).toContain('cup of tea');
+    // Descriptions come through so the LLM has ground truth.
+    const bar = ctx!.perceived!.entities.find(e => e.name === 'bar terminal')!;
+    expect(bar.scenery).toBe(true);
+    expect(bar.description).toMatch(/counter/);
+  });
+
+  it("perceived context excludes NPCs and the player from its entity list", () => {
+    // NPCs address each other and the player via dialogue memory /
+    // addressing context — they should NOT show up as ambient entities.
+    const w = buildThrenody();
+    const player = findByName(w, 'you');
+    const mira   = findByName(w, 'Mira');
+    // Put the player and Mira in the same room to force the case.
+    moveInto(w, player, findByName(w, 'neutral lounge'));
+    const ctx = buildNpcContext(w, mira);
+    const names = ctx!.perceived!.entities.map(e => e.name);
+    expect(names).not.toContain('you');
+    expect(names).not.toContain('Mira');
+  });
 });

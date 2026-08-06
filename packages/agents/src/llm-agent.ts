@@ -172,6 +172,7 @@ function buildUserPrompt(npc: NpcContext, ex: Exchange): string {
 
   const reactivity = buildReactivityBlock(npc);
   const silicaBlock = buildSilicaBlock(npc, ex);
+  const ambientBlock = buildAmbientBlock(npc);
 
   return [
     `You are: ${npc.name} (${npc.species}).`,
@@ -186,9 +187,10 @@ function buildUserPrompt(npc: NpcContext, ex: Exchange): string {
     `Room context:`,
     `  ${npc.roomBrief}`,
     ``,
-    `Known facts (use ONLY these for topical content):`,
+    `Known facts (canonical for PLOT topics — do not invent new ones, do not paraphrase away):`,
     factsBlock || '  (none)',
     ``,
+    ...(ambientBlock ? [ambientBlock, ``] : []),
     ...(reactivity ? [reactivity, ``] : []),
     ...(silicaBlock ? [silicaBlock, ``] : []),
     `Recent dialogue:`,
@@ -199,6 +201,37 @@ function buildUserPrompt(npc: NpcContext, ex: Exchange): string {
     ``,
     `Produce the structured response now.`,
   ].join('\n');
+}
+
+/**
+ * Ambient block: the NPC's current room (name + description) plus the
+ * non-NPC entities they can see, each with any authored description.
+ *
+ * Purpose: give the LLM a small ground-truth surface it can lean on
+ * when the player asks about things the NPC can plainly see — bar
+ * terminals, windows, ceiling panels, memorial scripts — without any
+ * of those needing to be pre-authored as topical facts. The prompt
+ * system message tells the model to use this for ambient questions
+ * only, never as a substitute for plot facts.
+ *
+ * Returns undefined when no `perceived` is present so callers can
+ * skip the block entirely rather than emit an empty header.
+ */
+function buildAmbientBlock(npc: NpcContext): string | undefined {
+  const p = npc.perceived;
+  if (!p) return undefined;
+  const lines: string[] = [];
+  lines.push(`You are here: ${p.roomName || '(unnamed)'}`);
+  if (p.roomDescription) lines.push(`  ${p.roomDescription}`);
+  if (p.entities.length) {
+    lines.push(`You can see here (ambient — usable for casual/observational answers, NOT plot facts):`);
+    for (const e of p.entities) {
+      const tag = e.scenery ? ' [scenery]' : '';
+      const desc = e.description ? `\n    ${e.description}` : '';
+      lines.push(`  - ${e.name}${tag}${desc}`);
+    }
+  }
+  return lines.join('\n');
 }
 
 /**

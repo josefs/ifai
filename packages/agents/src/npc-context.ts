@@ -22,6 +22,7 @@ export function buildNpcContext(world: World, npcId: number): NpcContext | undef
   const roomTags = roomId !== undefined ? world.get(roomId, 'tags')?.values : undefined;
   const inPlayItems = collectInPlayItems(world, npcId, roomId);
   const silica = world.get(npcId, 'silicaProtocol');
+  const perceived = buildPerceived(world, npcId, roomId);
   return {
     id: npcId,
     name,
@@ -36,7 +37,50 @@ export function buildNpcContext(world: World, npcId: number): NpcContext | undef
     ...(inPlayItems.length ? { inPlayItems } : {}),
     ...(tagReactions ? { tagReactions: { ...tagReactions } } : {}),
     ...(silica ? { silicaProtocol: { readyToSpeak: silica.readyToSpeak } } : {}),
+    ...(perceived ? { perceived } : {}),
   };
+}
+
+/**
+ * Snapshot of what the NPC can see in their own room this turn.
+ *
+ *   - roomName, roomDescription — the room's authored data.
+ *   - entities — every non-NPC, non-player entity in the room, with
+ *     name and (optional) description. NPCs and the player are
+ *     excluded because the LLM already receives them via dialogue
+ *     memory / addressing context.
+ *
+ * The LLM uses this to answer conversationally about things the NPC
+ * can plainly see (a bar terminal, a slit window, a memorial script)
+ * without needing every ambient feature pre-authored as a fact.
+ *
+ * Returns `undefined` if the NPC isn't in a room — nothing sensible to
+ * report in that case.
+ */
+function buildPerceived(
+  world: World,
+  npcId: number,
+  roomId: number | undefined,
+): NpcContext['perceived'] {
+  if (roomId === undefined) return undefined;
+  const roomName = world.get(roomId, 'name')?.value ?? '';
+  const roomDescription = world.get(roomId, 'description')?.text ?? '';
+  const contents = world.get(roomId, 'container')?.contents ?? [];
+  const entities: NonNullable<NpcContext['perceived']>['entities'] = [];
+  for (const eid of contents) {
+    if (eid === npcId) continue;
+    if (world.get(eid, 'npc')) continue;
+    if (world.get(eid, 'player')) continue;
+    const eName = world.get(eid, 'name')?.value;
+    if (!eName) continue;
+    const desc = world.get(eid, 'description')?.text;
+    entities.push({
+      name: eName,
+      ...(desc ? { description: desc } : {}),
+      scenery: world.has(eid, 'scenery'),
+    });
+  }
+  return { roomName, roomDescription, entities };
 }
 
 /**

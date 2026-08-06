@@ -217,6 +217,15 @@ Style:
 - For routine successes, brief acknowledgment is fine.
 - For failures, phrase the reason in-fiction; never break frame with
   "you can't do that".
+- A "converse_fail" or "action_failed" event with reason=not_listening
+  means the player tried to talk to something that is NOT a person —
+  a wall terminal, a piece of scenery, an inanimate object, or the
+  player themselves. Render this in-fiction as the player realising
+  the target is not something to converse with (e.g. "The bar
+  terminal chirps to itself; it takes orders, not questions."). Do
+  NOT invent a voice, do NOT put words in the target's mouth, do NOT
+  have the target speak, hum-then-speak, or otherwise reply. This is
+  a failed attempt, not a spoken exchange.
 `.trim();
 
 export const NARRATOR_LOOK_MOVE = `
@@ -232,8 +241,28 @@ SCENERY — do NOT enumerate:
   the room is described. They exist so the parser can resolve
   "look at the window" — nothing more. If nothing else in the events
   references them, they should not appear in your prose.
-- Non-scenery entities (portable items, NPCs) are still worth calling
-  out briefly.
+
+PEOPLE PRESENT — always name them:
+- Any non-scenery visible entity that has a persona field or reads as a
+  person/character (Mira, Khaleth, Tasen, Saen-of-Three-Notes, Aslin
+  Keer, Kessa, and so on) MUST be named explicitly in the room prose.
+  Player-facing rule: a look or arrival that fails to say who is here
+  is a bug — the player has no other way to know Mira is standing at
+  the bar.
+- Attribute each named person with one short observational detail
+  (posture, focus of attention, what they are doing) that grounds them
+  in the room. Do NOT invent dialogue for them, do NOT paraphrase their
+  facts, and do NOT hint at plot content they have not surfaced yet.
+  A single grounded sentence per person is enough.
+- Good: "Mira stands at the bar, datapad angled away from the room.
+  Khaleth is seated by the rim wall, breath-mask sealed, watching the
+  door."
+- BAD: silence on people who are visibly here.
+- BAD: dumping every fact you know about them.
+
+OTHER OBJECTS — brief mentions:
+- Non-scenery portable items and other things worth grabbing may be
+  called out in a short phrase. Don't itemise — one clause is enough.
 
 EXITS — woven into the prose, never as a list:
 - Each exit in the perception has a "dir" (e.g. spinward, inward, up, out)
@@ -277,6 +306,21 @@ NPC SPEECH — quoted, attributed, woven with gesture:
   at the door. 'Not here.'"), but do NOT change the words inside the
   quotes, do not add information, and do not invent a topic the NPC
   did not address.
+
+INTRODUCE THE SPEAKER BY NAME on first mention within a turn:
+- Every "npcSpoke" event carries the speaker's "name" field. The FIRST
+  time a speaker appears in this turn's prose, refer to them by that
+  name (e.g. "Mira"), not by a pronoun. Subsequent references in the
+  same turn may use pronouns.
+- This is critical when the turn is a room-arrival with a proactive
+  greet: the player just walked in, has not spoken to this person yet,
+  and there is no prior context in which the pronoun would resolve. A
+  bare "She leans forward, 'Good — you're here.'" leaves the player
+  guessing who spoke.
+- Good: "Mira leans forward, eyes narrowed. 'Good — you're here…'"
+- BAD: "She leans forward…" as the first mention of the speaker.
+- If no "addressed" event precedes the "npcSpoke" (i.e. the NPC spoke
+  proactively), you MUST name them before the quoted line.
 - The "speech" field is passed to you as a plain string. If you see any
   JSON escape sequences in it (e.g. \\" or \\n), decode them — never
   emit backslash sequences in your output. The reader sees your prose

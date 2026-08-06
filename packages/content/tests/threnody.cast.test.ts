@@ -126,4 +126,164 @@ describe('buildThrenody — Contested Casualty cast', () => {
     expect(facts['iren-vass-record']).toBeDefined();
     expect(facts['aslin-keer-record']).toBeDefined();
   });
+
+  it("Aslin has follow-up topics for every noun his Iren-Vass fact volunteers", () => {
+    // Principle: any concrete noun a character names in one fact
+    // should itself be a topic they can be asked about. Aslin's
+    // Iren-Vass fact volunteers "flash drive", "clinic", "our people",
+    // "the official version" and "the recording"; each has its own
+    // entry so a follow-up ("ask aslin about the drive") lands.
+    const id = findByName('Aslin Keer')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    for (const key of ['the-drive', 'the-clinic', 'our-people', 'the-official-version', 'the-recording']) {
+      expect(facts[key], `Aslin should hold ${key}`).toBeDefined();
+      expect(facts[key]!.text.length, `${key} text should be substantive`).toBeGreaterThan(80);
+    }
+    // And the natural phrasing the player is most likely to try must
+    // resolve — this is the exact case that surfaced the bug.
+    const drive = facts['the-drive']!;
+    expect(drive.aliases ?? []).toEqual(expect.arrayContaining(['the drive', 'flash drive']));
+    const clinic = facts['the-clinic']!;
+    expect(clinic.aliases ?? []).toEqual(expect.arrayContaining(['the clinic', 'clinic']));
+  });
+
+  it("every NPC whose canonical fact names 'the clinic' can be asked about it", () => {
+    // Broader audit: Iren Vass died at 'a Vorthi clinic' — Mira,
+    // Khaleth, Tasen, Aslin, and Threnody all reference it. Each must
+    // carry a `the-clinic` topic so the player can follow up wherever
+    // the reference surfaces first.
+    for (const name of ['Mira', 'Khaleth', 'Tasen', 'Aslin Keer', 'station terminal']) {
+      const id = findByName(name)!;
+      const facts = w.get(id, 'knows')?.facts ?? {};
+      expect(facts['the-clinic'], `${name} should hold 'the-clinic'`).toBeDefined();
+      expect(facts['the-clinic']!.aliases ?? [], `${name} 'the-clinic' aliases`)
+        .toEqual(expect.arrayContaining(['the clinic']));
+    }
+  });
+
+  it("Mira, Aslin, and Threnody all carry a 'the-reach' topic", () => {
+    // The Reach — the human confederation Aslin reports to — is
+    // named in each of their accounts. All three should be askable.
+    for (const name of ['Mira', 'Aslin Keer', 'station terminal']) {
+      const id = findByName(name)!;
+      const facts = w.get(id, 'knows')?.facts ?? {};
+      expect(facts['the-reach'], `${name} should hold 'the-reach'`).toBeDefined();
+    }
+  });
+
+  it("Mira and Kessa carry a 'the-border' topic", () => {
+    // Both name 'the border' in their accounts; both need to be
+    // askable about it, from their own perspectives.
+    for (const name of ['Mira', 'Kessa']) {
+      const id = findByName(name)!;
+      const facts = w.get(id, 'knows')?.facts ?? {};
+      expect(facts['the-border'], `${name} should hold 'the-border'`).toBeDefined();
+    }
+  });
+
+  it("Mira carries 'the-hearth' and 'war-crest' faction topics", () => {
+    const id = findByName('Mira')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['the-hearth']).toBeDefined();
+    expect(facts['war-crest']).toBeDefined();
+  });
+
+  it("Khaleth carries 'war-crest-cell' and 'the-record' follow-ups", () => {
+    const id = findByName('Khaleth')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['war-crest-cell']).toBeDefined();
+    expect(facts['the-record']).toBeDefined();
+  });
+
+  it("Tasen carries 'intelligence-officers' and 'the-file' follow-ups", () => {
+    const id = findByName('Tasen')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['intelligence-officers']).toBeDefined();
+    expect(facts['the-file']).toBeDefined();
+    // Player is likely to type 'the drive' after talking to Aslin;
+    // Tasen's the-file must alias it so the two accounts can be
+    // compared without the player having to remember the terminology.
+    expect(facts['the-file']!.aliases ?? [])
+      .toEqual(expect.arrayContaining(['the drive']));
+  });
+
+  it("Kessa carries 'brother-in-law' and 'the-long-watch' follow-ups", () => {
+    const id = findByName('Kessa')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['brother-in-law']).toBeDefined();
+    expect(facts['the-long-watch']).toBeDefined();
+  });
+
+  it("Threnody carries 'cause-of-death' as a distinct topic from the record", () => {
+    // The AI's iren-vass-record fact says "Cause of death: pending" —
+    // a natural player follow-up. It should have its own topic so
+    // asking directly doesn't collapse into the credentialed record.
+    const id = findByName('station terminal')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['cause-of-death']).toBeDefined();
+  });
+
+  it("Mira, Threnody, and Kessa all carry 'the-last-engagement' with consistent naming", () => {
+    // Second-order audit: the newly-added topics referenced 'the last
+    // engagement' / 'the border action' — the previous war this
+    // station was built out of. Three characters know it, from three
+    // different angles: Mira strategically, Threnody procedurally,
+    // Kessa personally (Deneth died in it). All three must be askable.
+    for (const name of ['Mira', 'station terminal', 'Kessa']) {
+      const id = findByName(name)!;
+      const facts = w.get(id, 'knows')?.facts ?? {};
+      const engagement = facts['the-last-engagement'];
+      expect(engagement, `${name} should hold 'the-last-engagement'`).toBeDefined();
+      // Common aliases so the player can use any of the natural
+      // phrasings each character used earlier.
+      expect(engagement!.aliases ?? [], `${name} the-last-engagement aliases`)
+        .toEqual(expect.arrayContaining(['the border action', 'the last war']));
+    }
+  });
+
+  it("Mira's opening-session aliases 'opening theatre' (introduced by night-session)", () => {
+    // Mira's night-session fact mentions 'opening theatre' as a
+    // synonym; if a player uses that phrase, it should land on the
+    // opening-session topic.
+    const id = findByName('Mira')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    expect(facts['opening-session']!.aliases ?? [])
+      .toEqual(expect.arrayContaining(['opening theatre']));
+  });
+
+  it('Threnody knows every named guest and the plot objects the player will hear about', () => {
+    // Full Chekhov's-noun audit of the station AI. Because Threnody is
+    // the omniscient-ish narrator-adjacent character, players will ask
+    // her about any name they've encountered. She should have a
+    // procedural, understated answer for each — and for plot objects
+    // she doesn't hold, an honest "I have no record" in her voice.
+    const id = findByName('station terminal')!;
+    const facts = w.get(id, 'knows')?.facts ?? {};
+    const expected = [
+      // Delegates.
+      'mira-vane', 'khaleth', 'tasen', 'saen-of-three-notes',
+      // Vorthi factions and the collapse she refuses.
+      'the-hearth', 'war-crest', 'the-vorthi',
+      // Geography and the widow's partner.
+      'the-border', 'deneth',
+      // Plot objects she does not physically hold.
+      'the-drive', 'the-recording',
+      // Procedure and gates.
+      'credentials', 'maintenance-corridor', 'opening-session',
+    ];
+    for (const key of expected) {
+      expect(facts[key], `Threnody should hold '${key}'`).toBeDefined();
+      expect(facts[key]!.text.length, `${key} text should be substantive`)
+        .toBeGreaterThan(80);
+    }
+    // Terminology alignment with the other characters — a player who
+    // learned a phrase from one NPC should be able to use it on
+    // Threnody without having to guess her preferred noun.
+    expect(facts['the-drive']!.aliases ?? [])
+      .toEqual(expect.arrayContaining(['the drive', 'flash drive', 'the file']));
+    expect(facts['the-vorthi']!.aliases ?? [])
+      .toEqual(expect.arrayContaining(['vorthi']));
+    expect(facts['saen-of-three-notes']!.aliases ?? [])
+      .toEqual(expect.arrayContaining(['saen', 'the silica envoy']));
+  });
 });

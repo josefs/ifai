@@ -98,4 +98,20 @@ describe('buildNarratorSystem', () => {
     const minimal = buildNarratorSystem([{ kind: 'took' }], perceptionNoTime);
     expect(minimal.length).toBeLessThan(fullish.length);
   });
+
+  it('the look/move section instructs the narrator to name people present', () => {
+    // Regression: `look` and room-arrivals used to silently omit NPCs
+    // standing right there. The player has no other way to learn Mira
+    // is at the bar — the narrator must name them.
+    expect(NARRATOR_LOOK_MOVE).toMatch(/PEOPLE PRESENT/i);
+    expect(NARRATOR_LOOK_MOVE).toMatch(/MUST be named/);
+  });
+
+  it('the NPC speech section requires the speaker be introduced by name on first mention', () => {
+    // Regression: proactive greets on arrival used to render as
+    // "She leans forward..." with no prior mention of who "she" is.
+    // The narrator must name the speaker before pronouns take over.
+    expect(NARRATOR_NPC_SPEECH).toMatch(/INTRODUCE THE SPEAKER BY NAME/);
+    expect(NARRATOR_NPC_SPEECH).toMatch(/not by a pronoun/);
+  });
 });

@@ -177,7 +177,9 @@ function renderFailure(
     case 'already_held':    return `You already have the ${t}.`;
     case 'not_held':        return `You aren't carrying the ${t}.`;
     case 'not_recipient':   return `You can't give anything to ${t ?? 'that'}.`;
-    case 'not_listening':   return `${t ?? 'They'} doesn't seem inclined to talk.`;
+    case 'not_listening':   return t
+                              ? `The ${t} isn't something you can hold a conversation with.`
+                              : `They won't answer.`;
     case 'refused':         return `${t ?? 'They'} declines.`;
     case 'unknown_target':  return 'You can\'t see any such thing.';
     case 'dark':            return 'It\'s too dark to make out details.';

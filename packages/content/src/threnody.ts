@@ -180,7 +180,10 @@ export function buildThrenody(): World {
   moveInto(w, lgSkylight, lounge);
 
   const lgBar = w.newEntity({
-    name: { value: 'bar terminal', aliases: ['bar', 'the bar', 'station terminal', 'ai terminal'] },
+    // Note: no 'ai terminal' / 'station terminal' aliases here. Those
+    // read as "someone to talk to" and lured the parser into routing
+    // ask/tell exchanges at this scenery. Keep the aliases object-like.
+    name: { value: 'bar terminal', aliases: ['bar', 'the bar', 'counter', 'the counter'] },
     description: { text:
       'A polished half-circle counter with a Threnody interface set flush ' +
       'into its surface. Beverages are dispensed politely and without ' +
@@ -416,7 +419,8 @@ export function buildThrenody(): World {
       aliases: [
         'the opening session', 'opening session', 'the session',
         'the opening', 'the opening statements', 'the chamber',
-        'the first session',
+        'the first session', 'opening theatre', 'the opening theatre',
+        'the theatre',
       ],
     },
     'vorthi-delegation': {
@@ -473,6 +477,85 @@ export function buildThrenody(): World {
         "made him useful — and that someone is probably us. Don't " +
         "make a second deal with him.",
       aliases: ['aslin truth', 'who aslin really is', 'reach intelligence'],
+    },
+    // Companion topics for the concrete nouns Mira volunteers in her
+    // briefing and vorthi/aslin/iren facts. Each is short, in her
+    // strategic-and-controlled register.
+    'the-hearth': {
+      text:
+        "Hearth is the older Vorthi civilian tradition — mourners, " +
+        "clinicians, farmers. Khaleth speaks for them here. Their line " +
+        "on the ceasefire is that grief has to be counted before a " +
+        "signature is worth the paper. Mostly true. Usually inconvenient.",
+      aliases: ['hearth', 'the hearth', 'hearth faction', 'the hearth faction', 'vorthi hearth'],
+    },
+    'war-crest': {
+      text:
+        "War-Crest is the younger Vorthi soldier caste, ascendant since " +
+        "the border action. Tasen speaks for them and speaks fast. Their " +
+        "line is that no signature is worth anything without our " +
+        "intelligence services publicly on a hook. That's the real " +
+        "obstacle in this room, not the seating.",
+      aliases: [
+        'war crest', 'the war-crest', 'the war crest',
+        'war-crest faction', 'the war-crest faction', 'war crest faction',
+      ],
+    },
+    'the-reach': {
+      text:
+        "The Reach — the loose confederation Aslin's outfit reports to. " +
+        "Officially observers here, unofficially the reason there is " +
+        "anything to observe. Assume any of their people carry a second " +
+        "brief; the first is the cover.",
+      aliases: ['reach', 'the reach', 'reach intelligence', 'the observers', 'reach observers'],
+    },
+    'the-border': {
+      text:
+        "The old Reach–Vorthi border. Nominally quiet since the last " +
+        "engagement; in practice a slow bleed of clinics, safehouses, " +
+        "and quiet cross-passings. Iren was working a rotation there " +
+        "when she died. Everything on this station's agenda comes back " +
+        "to that line, one way or another.",
+      aliases: ['the border', 'border', 'the frontier', 'the line', 'the old border'],
+    },
+    'the-last-engagement': {
+      text:
+        "The four-day border action, four years ago. The one this " +
+        "station was built out of the pieces of. My service and their " +
+        "War-Crest each thought the other was about to break the older " +
+        "treaty; both moved first, both were wrong, both signed the " +
+        "ceasefire that's held since — barely. That truce is what these " +
+        "talks are meant to make permanent. It is also what Iren's death " +
+        "is testing.",
+      aliases: [
+        'the last engagement', 'last engagement', 'the border action',
+        'the border war', 'the last war', 'four years ago',
+        'the previous war', 'the engagement',
+      ],
+    },
+    'the-clinic': {
+      text:
+        "A Vorthi Hearth field clinic on the border. Iren was rotating " +
+        "through as a visiting medic. Officially a treaty-registered " +
+        "medical facility; what else it was I do not intend to speculate " +
+        "about on this side of a locked door. If you get a chance to ask " +
+        "Khaleth about it, ask.",
+      aliases: [
+        'clinic', 'the clinic', 'vorthi clinic', 'field clinic',
+        'the field clinic', 'the border clinic',
+      ],
+    },
+    'night-session': {
+      text:
+        "The real work of these talks. After the opening theatre wraps, " +
+        "the delegations retire to side rooms — the neutral lounge, " +
+        "sometimes the methane chamber, sometimes the maintenance ring. " +
+        "Nothing there is on any transcript. That's why I need what " +
+        "you can bring me before it starts.",
+      aliases: [
+        'night session', 'the night session', 'the side rooms',
+        'side rooms', 'after opening', 'the second session',
+      ],
     },
     'iren-vass': {
       text:
@@ -586,6 +669,157 @@ export function buildThrenody(): World {
     },
     species: { id: 'station-ai' },
     knows: { facts: {
+      // Named guests. Threnody is the station AI and keeps a manifest;
+      // she can be asked about any delegate the player has heard of.
+      // Declared first so specific-noun aliases win against broader
+      // topics below in the substring-based fallback matcher.
+      'mira-vane': {
+        text:
+          "Mira Vane. Reach delegation, senior aide, arrived three days " +
+          "ahead of the delegation proper. She works from the aide " +
+          "quarters more than she sleeps. If she has slept in the last " +
+          "forty hours, she did it at the desk.",
+        aliases: ['mira', 'mira vane', 'the aide', 'the human aide', 'the delegation aide'],
+      },
+      'khaleth': {
+        text:
+          "Senior Envoy Khaleth. Vorthi, Hearth faction. Speaks for the " +
+          "civilian body. Requests the memorial protocol before " +
+          "substantive talks; I have honoured that request every time he " +
+          "has made it, which is every time.",
+        aliases: ['envoy khaleth', 'the hearth speaker', 'the hearth envoy'],
+      },
+      'tasen': {
+        text:
+          "Envoy Tasen. Vorthi, War-Crest faction. Speaks for the " +
+          "military body. Uses the maintenance corridor between sessions. " +
+          "I noted this in the log. No one has asked me why yet.",
+        aliases: ['envoy tasen', 'the war-crest speaker', 'the war-crest envoy'],
+      },
+      'saen-of-three-notes': {
+        text:
+          "Saen-of-Three-Notes. Silica envoy, methane-atmosphere species, " +
+          "communicates in chime-language. The silica have sent an envoy " +
+          "to a Hearth-War-Crest matter for the first time in eleven " +
+          "years. I do not have a translation model I trust.",
+        aliases: [
+          'saen', 'the silica envoy', 'silica envoy', 'the crystal envoy',
+          'the chime envoy', 'the silica',
+        ],
+      },
+      // Vorthi factional geography. Threnody treats Hearth and War-Crest
+      // as distinct bodies (see tagReactions.vorthi) and will not
+      // collapse them.
+      'the-hearth': {
+        text:
+          "The Hearth. The civilian body of the Vorthi — homes, clinics, " +
+          "the naming-rite, the older script. Khaleth speaks for it. " +
+          "Their dead are on the fourth panel of the memorial wall, in " +
+          "the Hearth script.",
+        aliases: ['hearth', 'the hearth faction', 'hearth faction', 'the civilian vorthi'],
+      },
+      'war-crest': {
+        text:
+          "The War-Crest. The military body of the Vorthi — a separate " +
+          "chain of custody, a separate script, a separate view of the " +
+          "border. Tasen speaks for it. Their dead are on the fifth " +
+          "panel, in the War-Crest script.",
+        aliases: [
+          'war crest', 'the war-crest', 'the war crest', 'war-crest faction',
+          'the military vorthi', 'the war-crest cell',
+        ],
+      },
+      'the-vorthi': {
+        text:
+          "There is no single Vorthi answer. Hearth and War-Crest are " +
+          "two bodies, not one; they share a language and disagree about " +
+          "everything else. Ask me about the Hearth or about the " +
+          "War-Crest, and I can help. Ask me about 'the Vorthi', and I " +
+          "will ask you to be more specific.",
+        aliases: ['vorthi', 'the vorthi delegation', 'the vorthi people'],
+      },
+      // Geography and procedure the player will meet in transcripts
+      // long before Threnody names them herself.
+      'the-border': {
+        text:
+          "The old border. The demarcation line between Reach space and " +
+          "Vorthi space, held by treaty since the last engagement. Iren " +
+          "Vass crossed it under a medical exchange twelve days ago and " +
+          "did not cross back.",
+        aliases: [
+          'border', 'the demarcation', 'the border line', 'the old border',
+          'the frontier',
+        ],
+      },
+      'deneth': {
+        text:
+          "Deneth. Vorthi, War-Crest infantry, killed on the second day " +
+          "of the last engagement. His name is on the third panel, " +
+          "second column, in the War-Crest script. Kessa asked me to cut " +
+          "his etching a little deeper than the others. I did.",
+        aliases: [
+          'deneth of the war-crest', "kessa's partner", "kessa's husband",
+          'her partner', 'her husband',
+        ],
+      },
+      // Named plot objects. Threnody was not physically at the clinic
+      // and holds no interior sensor arc there; her honest answer is
+      // procedural, not investigative.
+      'the-drive': {
+        text:
+          "A flash drive. Named in three separate accounts I have " +
+          "received; produced by none of them. The Vorthi clinic is " +
+          "outside my sensor arc. I hold no record of the drive's " +
+          "contents, its provenance, or its present holder. What I have " +
+          "is the shape of a gap where an artefact ought to be.",
+        aliases: ['the flash drive', 'the file', 'the drive', 'flash drive'],
+      },
+      'the-recording': {
+        text:
+          "An audio recording, allegedly of the clinic room after Iren " +
+          "Vass's death. Aslin Keer has said he holds it. It is not in " +
+          "my archive. If it is authentic, it is evidence; if it is not, " +
+          "it is a story someone wanted told. I have no way to tell you " +
+          "which.",
+        aliases: [
+          'the audio', "aslin's recording", "keer's recording", 'the audio recording',
+          'the clinic recording',
+        ],
+      },
+      'credentials': {
+        text:
+          "A Reach-issue credentials badge, keyed to the aide-of-record " +
+          "for this delegation. Presented at my terminal, it releases " +
+          "the memorial records I hold in trust. Until presented, I " +
+          "defer. I am sorry; the rule is older than either of us.",
+        aliases: [
+          'the badge', 'the credentials', 'credentials badge', 'my badge',
+          'the aide badge', 'the delegation badge',
+        ],
+      },
+      'maintenance-corridor': {
+        text:
+          "The maintenance ring. A service corridor around the outer " +
+          "hull, kept warm for the engineering crews. It has no cameras. " +
+          "Tasen has passed through it four times in the last three " +
+          "days. This is not a policy of mine; it is a design.",
+        aliases: [
+          'the maintenance corridor', 'the maintenance ring', 'maintenance ring',
+          'the service corridor', 'the outer corridor',
+        ],
+      },
+      'opening-session': {
+        text:
+          "The opening session convenes in the negotiation chamber " +
+          "inward of the neutral lounge. Chairs are set; the seating is " +
+          "arranged in Hearth-first, War-Crest-second alternation, per " +
+          "Khaleth's request. I open the doors when the chime sounds. " +
+          "Not before.",
+        aliases: [
+          'the session', 'the opening session', 'the negotiations',
+          'negotiations', 'the ceasefire', 'the talks', 'the chamber',
+        ],
+      },
       'everyone-schedules': {
         text:
           "I keep timetables for every guest. The Vorthi War-Crest is " +
@@ -625,6 +859,58 @@ export function buildThrenody(): World {
           "field remains open.",
         aliases: ['iren vass', 'iren', 'vass', 'the medic record', 'the casualty record'],
       },
+      // Follow-ups for the nouns in `iren-vass-record` and Threnody's
+      // other facts. Register: procedural, mildly melancholy, does not
+      // volunteer beyond what is asked.
+      'the-clinic': {
+        text:
+          "The Vorthi field clinic. Hearth-run, treaty-registered under " +
+          "Article 14. Its perimeter is the last position where Iren " +
+          "Vass's telemetry updated. I hold no interior recordings — " +
+          "the clinic was outside my sensor arc. What happened between " +
+          "the perimeter and the moment her signal ended is a matter " +
+          "for the delegations, not for me.",
+        aliases: [
+          'clinic', 'the clinic', 'the field clinic',
+        ],
+      },
+      'the-reach': {
+        text:
+          "The Reach. A confederation of human polities that maintains " +
+          "an observer detachment on this station. Its intelligence " +
+          "service files reports through the same channel as its " +
+          "translators. I am aware of the ambiguity. I do not adjudicate " +
+          "it.",
+        aliases: [
+          'reach', 'the reach', 'the reach observers', 'reach observers',
+          'the observers', 'reach intelligence',
+        ],
+      },
+      'cause-of-death': {
+        text:
+          "Cause of death: pending. My record cannot close on a " +
+          "conclusion the delegations have not agreed to. The narrative " +
+          "field remains open, awaiting the account this ceasefire is " +
+          "here to produce. Until then, 'pending' is the honest word.",
+        aliases: [
+          'cause of death', 'the cause of death', 'how she died',
+          'the cause', 'coroner', 'the coroner', 'the finding',
+        ],
+      },
+      'the-last-engagement': {
+        text:
+          "The border action, four years, one month, and seventeen days " +
+          "ago. Four days of exchange; two hundred and eighty-three names " +
+          "on my wall from those four days; twenty-nine unidentified " +
+          "still. I was assembled after the engagement, from the hulls " +
+          "that did not come back from it. I do not remember the war. I " +
+          "remember what it cost.",
+        aliases: [
+          'the last engagement', 'last engagement', 'the border action',
+          'the border war', 'the last war', 'the previous war',
+          'four years ago', 'the engagement', 'the war',
+        ],
+      },
       'aslin-keer-record': {
         text:
           "Aslin Keer's visitor manifest entry lists him as a translator " +
@@ -639,7 +925,7 @@ export function buildThrenody(): World {
           "for four years, two months, and eleven days. Her partner, " +
           "Deneth, is on the third panel, second column. I keep his etching " +
           "a little deeper than the others. She asked me to.",
-        aliases: ['the widow', 'kessa', 'the mourner', 'vorthi widow', 'deneth widow'],
+        aliases: ['the widow', 'kessa', 'the mourner', 'vorthi widow'],
       },
     } },
     dialogueMemory: { entries: [] },
@@ -726,6 +1012,45 @@ export function buildThrenody(): World {
           "what humans do — they made the deaths symmetric in the " +
           "record. We accepted the symmetry. Today I am tired of it.",
         aliases: ['iren', 'vass', 'the medic', 'the dead', 'the casualty'],
+      },
+      // Follow-ups for the nouns Khaleth volunteers in `iren-vass`.
+      // Each in his composed, mournful register.
+      'the-clinic': {
+        text:
+          "A Hearth field station on the old border. It treated our " +
+          "wounded, and — by the older custom, not the treaty — it did " +
+          "not turn away those who came unarmed and unarmed only. Iren " +
+          "worked there twice before. She was known to us. She was safe " +
+          "with us. Until she was not.",
+        aliases: [
+          'clinic', 'the clinic', 'the field clinic', 'hearth clinic',
+          'the field station', 'the border clinic',
+        ],
+      },
+      'war-crest-cell': {
+        text:
+          "A small unit of the younger tradition — three, we believe, " +
+          "though we did not see. They came for a purpose the Hearth " +
+          "does not sanction, in a place where the Hearth does not permit " +
+          "such purposes. They will not be named on this record, and I " +
+          "will not name them here. But they were ours, and that is a " +
+          "debt the Hearth carries.",
+        aliases: [
+          'war-crest cell', 'the war-crest cell', 'the cell', 'the attackers',
+          'the war-crest attackers', 'the vorthi attackers',
+        ],
+      },
+      'the-record': {
+        text:
+          "The official ledger of what happened. Crossfire; both sides " +
+          "at fault; nothing further. The humans agreed to it because it " +
+          "spared them explanations. We agreed because we thought silence " +
+          "would let the wound close. It did not. Records can be reopened. " +
+          "That is why we are here.",
+        aliases: [
+          'the record', 'the official record', 'official record',
+          'the ledger', 'the report', 'the account',
+        ],
       },
       'memorial-protocol': {
         text:
@@ -826,6 +1151,46 @@ export function buildThrenody(): World {
           "scrubbed the room. Don't tell me about Hearth's grief. Hearth " +
           "let it happen.",
         aliases: ['iren', 'vass', 'the medic', 'the dead', 'the casualty'],
+      },
+      // Follow-ups for the nouns Tasen throws at the player in
+      // `iren-vass`. His register: sharp, accusatory, precise.
+      'the-clinic': {
+        text:
+          "Our clinic. Hearth field station on the border — treated " +
+          "our wounded, and, yes, sometimes ours who did not want to " +
+          "be found. Ask me if that surprises you and I will laugh in " +
+          "your face. What matters is your service knew what the clinic " +
+          "was and used it. Iren was the walk-in credential. Your " +
+          "officers were the payload.",
+        aliases: [
+          'clinic', 'the clinic', 'our clinic', 'the field clinic',
+          'the field station', 'the border clinic',
+        ],
+      },
+      'intelligence-officers': {
+        text:
+          "Two of yours. Reach, no doubt, though your ambassador will not " +
+          "say the word. They followed Iren in half a step behind and " +
+          "they left with what they came for. Names, ranks, unit — that " +
+          "is what we want on the record before we sign anything. So " +
+          "far your side has offered us silences dressed as regret.",
+        aliases: [
+          'intelligence officers', 'your officers', 'the officers',
+          'your intelligence', 'reach officers', 'the two officers',
+          'human officers', 'the agents',
+        ],
+      },
+      'the-file': {
+        text:
+          "A file. A drive. Whatever your service is calling it this " +
+          "week. Something worth two officers, a walk-in medic, and a " +
+          "clinic full of witnesses to lose. You tell me what was on it " +
+          "and I will tell you whether the accusation stops here or " +
+          "keeps climbing.",
+        aliases: [
+          'the file', 'file', 'the drive', 'the flash drive', 'drive',
+          'the payload', 'what they came for',
+        ],
       },
       'war-crest-stance': {
         text:
@@ -1006,6 +1371,65 @@ export function buildThrenody(): World {
           "I have a recording of the room afterwards.",
         aliases: ['iren', 'vass', 'the medic', 'the casualty', 'the dead'],
       },
+      // Companion topics for the concrete nouns Aslin volunteers in the
+      // Iren-Vass fact. The general principle: any noun a character
+      // names in one topic should be a topic they can also be asked
+      // about. Deflecting on the follow-up ("what drive?") reads as
+      // the game not tracking its own fiction.
+      'the-drive': {
+        text:
+          "A courier drive. Yes, it made it out; no, I'm not going to " +
+          "tell you what's on it. What matters for you is that the " +
+          "Vorthi don't have it and don't yet know they lost it. When " +
+          "they find out, the ceasefire has a much shorter half-life " +
+          "than anyone at Mira's table is planning around.",
+        aliases: [
+          'drive', 'the drive', 'flash drive', 'the flash drive',
+          'courier drive', 'iren\'s drive', 'the file',
+        ],
+      },
+      'the-clinic': {
+        text:
+          "A Vorthi Hearth field clinic on the border, twelve days ago. " +
+          "Half surgery, half safehouse — the Hearth ran it that way " +
+          "for years and my service knew and did not press it. Iren had " +
+          "rotated through twice before as a visiting medic. That's why " +
+          "she could walk in without a challenge. That's why my people " +
+          "chose her.",
+        aliases: [
+          'clinic', 'the clinic', 'vorthi clinic', 'field clinic',
+          'the field clinic', 'the safehouse', 'the border clinic',
+        ],
+      },
+      'our-people': {
+        text:
+          "Two officers. Reach, not names you would know, and I am not " +
+          "going to give them to you. They were there for the drive and " +
+          "they got the drive. Iren was not part of their plan and " +
+          "neither was what happened to her; that is true, for whatever " +
+          "it is worth. I have opinions about how they handled the room " +
+          "afterwards. Those opinions are on the recording.",
+        aliases: [
+          'our people', 'your people', 'the officers', 'the agents',
+          'reach officers', 'reach agents', 'intelligence officers',
+          'the two officers',
+        ],
+      },
+      'the-official-version': {
+        text:
+          "Crossfire between a War-Crest cell and Hearth security. " +
+          "Every table in this station has a reason to leave it alone. " +
+          "My service doesn't want the drive discussed. The Hearth " +
+          "don't want to admit the clinic was a safehouse. The " +
+          "War-Crest don't want to explain why they were on the border " +
+          "at all. Four different lies, one convenient shape. That's " +
+          "why the recording is worth something.",
+        aliases: [
+          'official version', 'the official version', 'crossfire',
+          'the crossfire', 'the cover story', 'cover story',
+          'the official story',
+        ],
+      },
       'the-recording': {
         text:
           "A small audio file. Vorthi voices, then human voices, then " +
@@ -1109,7 +1533,56 @@ export function buildThrenody(): World {
           "old border for eleven years. He is on this wall — third panel, " +
           "second column, near the top. The etching is deeper than the " +
           "others because I asked, and the station AI was kind.",
-        aliases: ['her partner', 'the partner', 'my partner', 'deneth', 'the husband', 'long watch'],
+        aliases: ['her partner', 'the partner', 'my partner', 'deneth', 'the husband'],
+      },
+      // Follow-ups for the nouns Kessa volunteers about Deneth and Iren.
+      // Register: personal, warm at the edges, unhurried; no politics.
+      'the-border': {
+        text:
+          "The old border, before this ceasefire and the one before it. " +
+          "Deneth walked it eleven years. Iren worked a clinic on it " +
+          "twelve days ago. I have never seen it in person. I do not " +
+          "need to; it is on this wall in every language the wall knows.",
+        aliases: ['the border', 'border', 'the old border', 'the frontier', 'the line'],
+      },
+      'the-long-watch': {
+        text:
+          "A Hearth term. Border service without expectation of relief. " +
+          "It is not a punishment and it is not a virtue; it is the work, " +
+          "and someone has to do it. Deneth chose it three times, when he " +
+          "could have come home. I did not always understand. I always " +
+          "understood who he was.",
+        aliases: [
+          'long watch', 'the long watch', 'border watch', 'the border watch',
+          "deneth's watch", "his watch", 'the watch',
+        ],
+      },
+      'brother-in-law': {
+        text:
+          "Rethen. Deneth's younger brother. He took a plasma round to " +
+          "the shoulder three summers ago and lived because Iren was on " +
+          "shift at the clinic and did not sleep for two nights. He is " +
+          "in Hearth country now, with children. He does not know Iren " +
+          "is dead. I have not been ready to tell him.",
+        aliases: [
+          'brother-in-law', 'the brother-in-law', 'my brother-in-law',
+          'rethen', 'the brother', "deneth's brother",
+        ],
+      },
+      'the-last-engagement': {
+        text:
+          "The four days on the border, four years ago. Deneth was on " +
+          "the third day. I do not talk about the fighting; the fighting " +
+          "is finished. What is not finished is the counting. Two hundred " +
+          "and eighty-three names on this wall from those four days. " +
+          "Threnody knows the number by heart because I asked her to. " +
+          "She keeps it near the top of her memory.",
+        aliases: [
+          'the last engagement', 'last engagement', 'the border action',
+          'the border war', 'the last war', 'the previous war',
+          'four years ago', 'the engagement', 'the war', 'the fighting',
+          "deneth's war", 'the four days',
+        ],
       },
       'the-memorial': {
         text:
