@@ -15,7 +15,7 @@ import {
   FallbackDialogueAgent, LLMDialogueAgent, buildNpcContext,
   type DialogueAgent,
 } from '@ifai/agents';
-import { buildThrenody, detectEasterEgg } from '@ifai/content';
+import { buildThrenody, detectEasterEgg, hintFor } from '@ifai/content';
 import { createWrappingWriter, detectWidth } from './wrap.ts';
 
 /**
@@ -97,6 +97,14 @@ async function main() {
     // time) go last so they don't compete with story verbs visually.
     if (trimmed === 'help' || trimmed === '?') {
       say(helpText() + '\n');
+      rl.prompt();
+      continue;
+    }
+    // `hint` — meta command. Prints a state-aware, in-fiction nudge
+    // toward the next useful action. Does not spend a turn (advances
+    // no clock time) so a player can safely consult it whenever.
+    if (trimmed === 'hint') {
+      say(hintFor(world) + '\n');
       rl.prompt();
       continue;
     }
@@ -355,7 +363,7 @@ function helpText(): string {
     'Climax:     present <thing> at <place>  (once you know where)',
     'Waiting:    wait  (advances time), time  (shows the clock)',
     '',
-    'Meta:       help, usage / tokens, quit / q',
+    'Meta:       help, hint, usage / tokens, quit / q',
     '',
     "Tip: verbs can be chained with 'and then' or a comma.",
   ].join('\n');
